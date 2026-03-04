@@ -4,15 +4,15 @@
 * [Problem Statement](#problem-statement)
 * [Overview](#step-by-step-overview)
 * [Technologies used](#technologies)
-* [Cloud](#cloud-infrastructure)
-  * [Terraform within Google Cloud Platform](#terraform-within-gcp)
-  * [Airflow](#airflow-set-up)
+* [Cloud](#cloud-platform)
+  * [Infrastructure as Code](#Infrastructure-as-code)
+  * [Orchestration](#orchestration)
 * [Data Pipeline](#data-pipeline)
-  * [Data Ingestion batch](#data-ingestion-DAG)
-  * [Data Lake](#data-lake-google-cloud-storage)
-  * [Data Warehouse](#data-warehouse-bigquery)
-  * [Transformations](#data-transformation-with-data-build-tool)
-* [Dashboard](#dashboard-two-tiles)
+  * [Data Ingestion batch](#data-ingestion-batch)
+  * [Data Lake GCS](#data-lake)
+  * [Data Warehouse BigQuery](#data-warehouse)
+  * [Transformations](#data-transformation)
+* [Dashboard](#dashboard-visualization)
 * [Instructions for running pipeline](#how-to-set-up-and-run-the-pipeline-with-docker)
 
 
@@ -40,8 +40,8 @@ Without automation, analysts must manually download and process raw data from th
 
 
 ## Technologies
-google cloud platform (GCP)  
-terraform  
+google cloud platform (GCP) as the primary cloud provider
+terraform 
 dlt  
 prefect flow  
 google cloud storage (GCS)  
@@ -50,36 +50,48 @@ data build tool (dbt)
 looker studio  
 docker
 
-
-
-
-
-## Cloud Infrastructure
-
-### Terraform within GCP
-
-### Airflow set up
+GIT  
+gcloud CLI  
+python  
+envirionment variables
 
 
 
 
 
-## Data pipline
+## ☁️ Cloud Platform
+Google Cloud Platform (GCP) as the primary cloud provider
 
-### Data Ingestion DAG
+### 🏗 Infrastructure as Code
+terraform provisions and manages Google Cloud Platform Resources (Google Cloud Service bucket, BigQuery dataset, IAM roles)
 
-### Data Lake Google Cloud Storage
-
-### Data Warehouse BigQuery
-
-### Data Transformation with data build tool
-
+### 🔄 Orchestration
+prefect automates and schdules the extract, load, transform workflow.
 
 
 
 
-## Dashboard two tiles
-looker studio
+
+## Data pipeline
+
+### 📥 Data Ingestion batch
+data load tool (dlt) extracts data from the NYC 311 API and loads it into cloud storage and BigQuery, using python as the core scripting language
+
+### 🗄 Data Lake
+Google Cloud Storage (GCS), as the data lake, stores raw partitioned parquet files
+
+### 🏢 Data Warehouse
+BigQuery, as the data warehouse, is a scalable analytics warehouse partitioned by created_date and clustered by borough and complaint_type
+
+### 🧮 Data Transformation
+using the data build tool (dbt) to clean, model, aggregate data into analytics-ready tables
+using dbt bigquery adapter to connect dbt to BigQuery
+
+
+
+
+## 📊 Dashboard visualization
+looker studio is  an interactive dashboard for exploring NYC 311 trends.
 
 tile 1 - categorical; bar chart showing the count of records per category; ex: top complaint type
 
@@ -90,3 +102,4 @@ tile 2 - temporal; line chart showing trends over time; ex: number of complaints
 
 
 ## How to set up and run the pipeline with docker
+uses docker (containerization) to ensure reproducible local development environment.
