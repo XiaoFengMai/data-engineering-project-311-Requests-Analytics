@@ -5,7 +5,7 @@
 * [Overview](#step-by-step-overview)
 * [Technologies used](#technologies)
 * [Cloud](#☁️cloud-platform)
-  * [Infrastructure as Code](#🏗-Infrastructure-as-code)
+  * [Infrastructure as Code](#-🏗-Infrastructure-as-code)
   * [Orchestration](#🔄orchestration)
 * [Data Pipeline](#data-pipeline)
   * [Data Ingestion batch](#📥data-ingestion-batch)
