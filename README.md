@@ -9,11 +9,11 @@
   * [Airflow](#airflow-set-up)
 * [Data Pipeline](#data-pipeline)
   * [Data Ingestion batch](#data-ingestion-DAG)
-  * [Data Lake](#google-cloud-storage)
-  * [Data Warehouse](#data-warehouse-big-query)
+  * [Data Lake](#data-lake-google-cloud-storage)
+  * [Data Warehouse](#data-warehouse-bigquery)
   * [Transformations](#data-transformation-with-data-build-tool)
 * [Dashboard](#dashboard-two-tiles)
-* [Instructions for running pipeline](#set-up-and-run-the-pipeline-with-docker)
+* [Instructions for running pipeline](#how-to-set-up-and-run-the-pipeline-with-docker)
 
 
 
@@ -65,11 +65,28 @@ docker
 
 
 ## Data pipline
-### Data Ingestion batch
 
-## Dashboard
+### Data Ingestion DAG
+
+### Data Lake Google Cloud Storage
+
+### Data Warehouse BigQuery
+
+### Data Transformation with data build tool
+
+
+
+
+
+## Dashboard two tiles
 looker studio
 
 tile 1 - categorical; bar chart showing the count of records per category; ex: top complaint type
 
 tile 2 - temporal; line chart showing trends over time; ex: number of complaints over a time period
+
+
+
+
+
+## How to set up and run the pipeline with docker
