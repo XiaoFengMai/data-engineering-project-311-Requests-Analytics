@@ -9,8 +9,8 @@
 * [Data Pipeline](#data-pipeline)
   * [Data Ingestion batch DAG](#data-ingestion-DAG)
   * [Data Lake](#google-cloud-storage)
-  * [Data Warehouse](#data-warehouse-partitioned-clustererd)
-  * [Data Transformation with dbt](#data-transformation-with-data-build-tool)
+  * [Data Warehouse](#data-warehouse-big-query)
+  * [Data Transformatiom](#data-transformation-with-data-build-tool)
 * [Dashboard](#dashboard-two-tiles)
 * [Instructions for running the pipeline](#set-up-and-run-the-pipeline-with-docker)
 
