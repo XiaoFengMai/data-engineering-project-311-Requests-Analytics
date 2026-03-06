@@ -1,4 +1,4 @@
-# cloud provider configuration
+# actual values for variables
 
 project_id      = "project-bdcd6ccf-5abd-43e1-a88"      # replace this with your unique project id
 region          = "us-central1"            # replace this with your selected region
