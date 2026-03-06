@@ -1,5 +1,4 @@
-# print values after deployment
-
+# values that Terraform prints after deployment
 
 output "bucket_name" {
   value = google_storage_bucket.data_lake_bucket.name
