@@ -1,1 +1,28 @@
+pandas
+  - lightweight data manipulation and preprocessing during ingestion
+  - inspect API responses, transforms timestamps
+  - validates schema structures before loading data into warehouse
 
+
+prefect
+  - orchestrate the pipeline
+  - schedule and manages workflow that extracts data, loads it into a data lake, and activates downstream processing steps
+
+
+requests
+  - a library used to make HTTP calls to NYC Open Data API.
+  - retrieves json records from NYC 311 dataset for processing
+
+
+data load tool[bigquery]
+  - to build the data ingestion pipeline
+  - extracts data from NYC 311 API
+  - normalizes the json structure
+  - installs additional dependicies required for loading data into bigquery
+  - loads the data into big query
+
+
+google-cloud-bigquery
+  - creates tables
+  - loads datasets
+  - execute queries
