@@ -1,3 +1,5 @@
+# declares variable
+
 variable "project_id" {          #defines a variable named project_id
   description = "project-bdcd6ccf-5abd-43e1-a88"  # replace this with your unique google cloud project iD
   type        = string
