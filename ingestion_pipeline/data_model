@@ -1,0 +1,13 @@
+Raw BigQuery Tables
+        │
+        ▼
+stg_311_requests
+        │
+        ▼
+int_311_cleaned
+        │
+        ▼
+Analytics Marts
+   ├── complaints_by_type
+   ├── complaints_by_borough
+   └── complaints_over_time
