@@ -1,0 +1,21 @@
+# the tests below validate data quality automatically when running data built tool test
+
+version: 2
+
+models:
+  - name: stg_311_requests
+    description: Cleaned staging model for NYC 311 service requests
+    columns:
+      - name: unique_key
+      tests:
+        - not_null
+        - unique
+
+  - name: complaints_by_type
+    description: aggregated complaints by type
+
+  - name: complaints_by_borough
+    description: aggregated complaints by borough
+
+  - name: complaints_over_time
+    description: Time series of complaint volumes
