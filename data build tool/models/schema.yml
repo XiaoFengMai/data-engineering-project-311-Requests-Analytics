@@ -28,3 +28,6 @@ models:
 
   - name: complaints_over_time
     description: Daily count of complaints to analyze seasonal trends.
+
+
+# run dbt docs generate dbt docs serve in project to generate an interactive documentation site showing model lineage, dependencies, column descriptions, data tests.
