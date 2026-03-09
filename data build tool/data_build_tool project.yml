@@ -8,7 +8,18 @@ model-paths: ["models"]
 
 models:
   nyc_311_project:
+
     staging:
       materialized: view
+
+    intermediate:
+      materialized: view
+
     marts:
       materialized: table
+      partition_by:                # splits tables by dates and queries scanning date range are faster
+        field: created_date
+        data_type: date
+      cluster_by:                  # groups rows by borough and complaint type, speeds up dashboard fillers
+        - borough
+        - complaint_type
