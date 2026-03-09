@@ -8,7 +8,7 @@ def run_ingestion():
 
 @task
 def run_dbt():
-    subprocess.run(["dbt", "run"], cwd="data_build_tool/nyc_311_project", check=True)
+    subprocess.run(["dbt", "run"], cwd="data_build_tool/", check=True)
 
 @flow
 def nyc_pipeline():
