@@ -3,19 +3,28 @@
 version: 2
 
 models:
-  - name: stg_311_requests
-    description: Cleaned staging model for NYC 311 service requests
+
+  - name: int_311_cleaned
+    description: Cleaned dataset of NYC 311 service requests used for analytics.
+
     columns:
       - name: unique_key
+        description: Unique identifier for each service request
         tests:
-          - not_null
           - unique
+          - not_null
+
+      - name: borough
+        description: Borough where the complaint originated
+
+      - name: complaint_type
+        description: Category of service request
 
   - name: complaints_by_type
-    description: aggregated complaints by type
+    description: Aggregated counts of complaints by type across NYC.
 
   - name: complaints_by_borough
-    description: aggregated complaints by borough
+    description: Aggregated counts of complaints grouped by borough.
 
   - name: complaints_over_time
-    description: Time series of complaint volumes
+    description: Daily count of complaints to analyze seasonal trends.
