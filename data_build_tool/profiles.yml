@@ -1,13 +1,15 @@
-nyc_311_project:
-  target:dev
-  outputs:
-    dev:
-      type: bigquery
-      method: service-account
-      project: YOUR_GCP_PROJECT_ID      # must edit this with your gcp project id
-      dataset: nyc_311_analytics
-      threads: 4
-      keyfile: /path/to/your/service-account.json    # must edit this with your path to json
-      timeout_seconds: 300
-      location: US
+# configures how dbt connects to BigQuery data warehouse.
+
+nyc_311_project:      # name of the dbt profile
+  target:dev        # sets the defauly target environment as dev wen you run dbt commands
+  outputs:        # defines named environments you can deploy to, in this case, dev.
+    dev:    
+      type: bigquery            # connect to BigQuery
+      method: service-account       # authenticate using google cloud serice account json key file 
+      project: YOUR_GCP_PROJECT_ID      # this is where bigquery lives must EDIT THIS with your gcp project id
+      dataset: nyc_311_analytics       # the bigquery dataset where dbt will write and create all models and tables
+      threads: 4                   # 4 models can be built and run simultaneously
+      keyfile: /path/to/your/service-account.json    # the local file path to your service account cred, must EDIT THIS with your path to json
+      timeout_seconds: 300              # if a query runs longer than 300 seconds (5 minutes) dbt will cancel 
+      location: US                # the BigQuery data region where your datasets are stored
     
