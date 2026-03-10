@@ -1,0 +1,13 @@
+nyc_311_project:
+  target:dev
+  outputs:
+    dev:
+      type: bigquery
+      method: service-account
+      project: YOUR_GCP_PROJECT_ID      # must edit this with your gcp project id
+      dataset: nyc_311_analytics
+      threads: 4
+      keyfile: /path/to/your/service-account.json    # must edit this with your path to json
+      timeout_seconds: 300
+      location: US
+    
