@@ -1,0 +1,33 @@
+# the tests below validate data quality automatically when running data build tool test
+
+version: 2
+
+models:
+
+  - name: int_311_cleaned
+    description: Cleaned dataset of NYC 311 service requests used for analytics.
+
+    columns:
+      - name: unique_key
+        description: Unique identifier for each service request
+        tests:
+          - unique
+          - not_null
+
+      - name: borough
+        description: Borough where the complaint originated
+
+      - name: complaint_type
+        description: Category of service request
+
+  - name: complaints_by_type
+    description: Aggregated counts of complaints by type across NYC.
+
+  - name: complaints_by_borough
+    description: Aggregated counts of complaints grouped by borough.
+
+  - name: complaints_over_time
+    description: Daily count of complaints to analyze seasonal trends.
+
+
+# run dbt docs; generate dbt docs serve in project to generate an interactive documentation site showing model lineage, dependencies, column descriptions, data tests.
