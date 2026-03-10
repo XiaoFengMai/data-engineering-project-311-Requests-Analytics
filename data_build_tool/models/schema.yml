@@ -14,7 +14,7 @@ models:              # starts the list of models to document and test
           - unique      # ensure no duplicates
           - not_null    # ensures that every requests has an ID
 
-      - name: borough        # documents aggregated models and provides description for each
+      - name: borough        # documents aggregated models and provides description for each category
         description: Borough where the complaint originated
 
       - name: complaint_type
