@@ -1,6 +1,7 @@
 # actual values for variables
 
-project_id      = "project-bdcd6ccf-5abd-43e1-a88"      # replace this with your unique project id
-region          = "us-central1"            # replace this with your selected region
-gcs_bucket_name = "nyc-311-gcs-data-lake"      # replace this with your gcs bucket name
-bigquery_dataset_name = "nyc_311_bigquery_dataset"        # replace this with your bigquery dataset name
+# replace with your unique project id, replace your selected region, your gcs bucket name, and your bigquery dataset name
+project_id      = "project-bdcd6ccf-5abd-43e1-a88"      
+region          = "us-central1"            
+gcs_bucket_name = "nyc-311-gcs-data-lake"      
+bigquery_dataset_name = "nyc_311_bigquery_dataset" 
