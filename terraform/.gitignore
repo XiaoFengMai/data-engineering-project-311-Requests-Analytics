@@ -1,4 +1,6 @@
-.terraform/
+# tells git which files and folders to exclude from version control
+
+.terraform/        
 *.tfstate
 *.tfstate.backup
 terraform.tfvars
