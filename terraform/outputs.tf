@@ -12,5 +12,5 @@ output "bigquery_dataset" {          # declares a second output variable named b
 
 # after running terraform, you should see
 
-#bucket_name = nyc-311-data-lake
-#bigquery_dataset = nyc_311_dataset
+# bucket_name = nyc-311-data-lake
+# bigquery_dataset = nyc_311_dataset
