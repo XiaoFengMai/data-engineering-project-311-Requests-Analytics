@@ -1,6 +1,13 @@
 # tells git which files and folders to exclude from version control
 
-.terraform/              # excludes terraform directory because they are large and easily regenerated
-*.tfstate                # excludes all terraform state files which contain sensitive data and should never be stored in source control
-*.tfstate.backup            # contain sensitive data
-terraform.tfvars                # holds environment specific config like API keys, credentials that should never be committed.
+# excludes terraform directory because they are large and easily regenerated
+.terraform/
+
+# excludes all terraform state files which contain sensitive data and should never be stored in source control
+*.tfstate    
+
+# contain sensitive data
+*.tfstate.backup            
+
+# holds environment specific config like API keys, credentials that should never be committed.
+terraform.tfvars                
