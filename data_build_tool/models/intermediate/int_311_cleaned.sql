@@ -1,6 +1,6 @@
 # this model creates a cleaner dataset
 
-SELECT                            # starts a transformation query
+SELECT                            -- starts a transformation query
     unique_key,           
 
     DATE(created_date) AS created_date,            # converts timestamp into date format, useful for partitioning, aggregation
