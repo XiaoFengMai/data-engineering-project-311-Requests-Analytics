@@ -26,9 +26,20 @@ Without automation, analysts must manually download and process raw data from th
   
   
   
+
+## Brief Overview 
+Build a data pipeline that
+1. Pulls data from NYC Open Data
+2. Stores raw data in Google Cloud Storage (data lake)
+3. Loads structured data into Google BigQuery
+4. Transforms data using data build tool
+5. Orchestrates with Prefect
+6. Visualize results in Looker Studio
+
+
+
   
-  
-## Step by Step Overview
+## Step by Step Guide
 1. Extract data from NYC service requests 2020-present data set obtained through NYC Open Data: https://data.cityofnewyork.us/Social-Services/311-Service-Requests-from-2020-to-Present/erm2-nwe9/about_data
 2.  Store the raw data into a data lake, Google Cloud Storage. The extracted 311 records are written as parquet files and uploaded to a dedicated Google Cloud Storage bucket. Files are organized by ingestion date to support incremental loads, maintain historical snapshots, and ensure scalable, cost-effective storage of raw data in its original form.
 3.  Load the datasets into a datawarehouse, BigQuery. Raw files stored in Google Cloud Storage are ingested into BigQuery as structured tables within a designated dataset. Tables are partitioned by created_date and clustered by fields such as borough and complaint_type to optimize query performance and support efficient analytical reporting.
