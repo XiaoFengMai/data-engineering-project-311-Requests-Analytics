@@ -5,7 +5,7 @@ nyc_311_project:      # name of the dbt profile
   outputs:        # defines named environments you can deploy to, in this case, dev.
     dev:    
       type: bigquery            # connect to BigQuery
-      method: service-account       # authenticate using google cloud serice account json key file 
+      method: oauth       # authenticate using google cloud serice account json key file 
       project: YOUR_GCP_PROJECT_ID      # this is where bigquery lives must EDIT THIS with your gcp project id
       dataset: nyc_311_analytics       # the bigquery dataset where dbt will write and create all models and tables
       threads: 4                   # 4 models can be built and run simultaneously
