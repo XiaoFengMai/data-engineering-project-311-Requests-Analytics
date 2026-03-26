@@ -184,7 +184,7 @@ this is done for:
 
 ### Data Transformation dbt
 dbt transforms raw BigQuery data into analytics-ready models
-Models:
+Models:  
 stg_311_requests
 - cleans and standardizes raw data (types, nulls, naming)
 fact_311_requests
