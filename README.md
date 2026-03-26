@@ -1,120 +1,232 @@
 # NYC 311 Urban Operations Analytics Pipeline
 
-## table of contents
+## Table of Contents
 * [Problem Statement](#problem-statement)
-* [Overview](#step-by-step-overview)
-* [Technologies used](#technologies)
-* [Cloud](#cloud-platform)
-  * [Infrastructure as Code](#Infrastructure-as-code)
-  * [Orchestration](#orchestration)
-* [Data Pipeline](#data-pipeline-architecture-diagram)
-  * [Data Ingestion batch](#data-ingestion-batch)
-  * [Data Lake GCS](#🗄data-lake)
-  * [Data Warehouse BigQuery](#data-warehouse)
-  * [Transformations](#data-transformation)
-* [Dashboard](#dashboard-visualization)
-* [Instructions for running pipeline](#how-to-set-up-and-run-the-pipeline-with-docker)
+* [Project Objectives](#project-objectives)
+* [Architecture Diagram](#architecture-diagram)
 
+* [Technologies used](#technologies)
+  
+* [Setup Instructions](#setup-instructions)
+  * [Prerequisites](#prerequisites)
+  * [Cloud Setup (GCP)](#cloud-setup-gcp)
+  * [Infrastructure as Code (Terraform)](#infrastructure-as-code-terraform)
+  * [Environment Configuration](#environment-configuration)
+
+* [Data Pipeline](#data-pipeline)
+  * [Pipeline Type (Batch Processing)](#pipeline-batch-processing)
+  * [Workflow Orchestration (Prefect)](#prefect)
+  * [Data Lake (GCS)](#data-lake-gcs)
+  * [Data Warehouse (BigQuery)](#data-warehouse-bigquery)
+  * [Data Transformation (dbt) ](#data-transformation-dbt)
+   
+* [Dashboard Visualization](#dashboard-visualization)
+  * [Dashboard Overview](#dashboard-overview)
+  * [Tile 1: Categorical Distribution](#tile-1-categorical-distribution)
+  * [Tile 2: Temporal Trends](#tile-2-temporal-trends)
+
+* [Running the Pipeline](#running-the-pipeline)
+  * [Using Docker](#using-docker)
+  * [Execute prefect flow](#executing-airflow-dag)
+  * [Run dbt Models](#running-dbt-models)
+  
+* [Sample Output Screenshots](#how-to-set-up-and-run-the-pipeline-with-docker)
+* [Final Notes](#final-notes)
 
 
 ## Problem Statement
-Large cities like New York receive many service requests through the 311 system. The reasons for these service requests range from noise complaints and sanitation issues to housing and infrastructure problems. If you've lived in New York City, you've likely experienced at least one of these: construction noises early in the morning, missed trash pickup, broken streetlights, traffic congestion, delays in public transportation and more. When something goes wrong, New Yorkers don't just complain, they report it through the city's 311 system.
+Large cities like New York generate thousands of service requests daily through the 311 system. These requests cover a wide range of urban issues, including noise complaints, sanitation problems, housing concerns, and infrastructure failures.
 
-With more and more people moving to New York City, more complaint reports and raw data of those reports there is to clean. City agencies must monitor complaint volumes, allocate resources efficiently, monitor rising urban issues, and improve response times. Hundreds of 311 service requests are generated daily and we need a system that transforms this public data into clear, decision-ready insights for the people of New York City. The goal is to move from, New Yorkers are complaining more lately about this issue, to, Noise complaints in Manhattan increased 20% over the last quarter, primarily related to construction permits.
+As New York City's population grows, so does the volume of 311 requests. This creates several challenges:
+- Raw data is large, unstructured, and difficult to analyze
+- Manual data processing leads to delays and inconsistencies
+- City agencies lack real-time visibility into trends
+- Decision-making becomes reactive instead of data-driven
+Without an automated system, analysts must manually download, clean, and aggregate data, resulting in inefficient workflows and limited insight generation.
+  
+The goal is to build a scalable, cloud-based end-to-end data pipeline that transforms raw NYC 311 service request data into clean, analytics-ready datasets and actionable insights.
+  
 
-Without automation, analysts must manually download and process raw data from the 311 database, leading to delayed reporting, inconsistent metrics, and poor visibility to trends. The goal is to build a reliable end-to-end data pipeline that turns raw NYC 311 service request data into meaningful, analytics-ready insights.
-  
-  
-  
-
-## Brief Overview 
+## Project Objectives 
 Build a data pipeline that
-1. Pulls data from NYC Open Data
-2. Stores raw data in Google Cloud Storage (data lake)
-3. Loads structured data into Google BigQuery
-4. Transforms data using data build tool
-5. Orchestrates with Prefect
-6. Visualize results in Looker Studio
+1. Extract Data
+Pull NYC 311 service request data (2020–present) from NYC Open Data.
+2. Provision Infrastructure (IaC)
+Use Terraform to create and manage all cloud resources.
+3. Build a Data Lake
+Store raw data in Google Cloud Storage (GCS) in partitioned parquet format.
+4. Load Data into a Data Warehouse
+Ingest structured data into BigQuery for analytical querying.
+5. Orchestrate the Pipeline
+Use Prefect to automate the batch ETL workflow.
+6. Transform Data
+Use dbt to clean, model, and aggregate data into analytics-ready tables.
+7. Visualize Insights
+Build an interactive dashboard to explore complaint trends across time and categories.
 
 
 
-  
-## Step by Step Guide
-1. Extract data from NYC service requests 2020-present data set obtained through NYC Open Data: https://data.cityofnewyork.us/Social-Services/311-Service-Requests-from-2020-to-Present/erm2-nwe9/about_data
-2.  Store the raw data into a data lake, Google Cloud Storage. The extracted 311 records are written as parquet files and uploaded to a dedicated Google Cloud Storage bucket. Files are organized by ingestion date to support incremental loads, maintain historical snapshots, and ensure scalable, cost-effective storage of raw data in its original form.
-3.  Load the datasets into a datawarehouse, BigQuery. Raw files stored in Google Cloud Storage are ingested into BigQuery as structured tables within a designated dataset. Tables are partitioned by created_date and clustered by fields such as borough and complaint_type to optimize query performance and support efficient analytical reporting.
-4.  Set up infrastructure using Terraform to ensure that the entire cloud environment can be recreated consistently through infrastructure as a a code.
-5. Orchestrate the batch workflow with Prefect to automate the extract, load, transform process from ingestion to transformation.
-6. After the data is loaded into BigQuery, use the data build tool (dbt)to clean and aggregate all records into dimension tables optimized for analytical queries. Partitioning and clustering strategies are applied to further improve performance and reflect real-world reporting use cases.
-7. The final layer of the pipeline is an interactive dashboard built with Looker Studio, that allows users to explore the most common complaint types across the city, track how complaint volumes change over time, compare service patterns across boroughs, and identify seasonal urban trends.
+## Architecture Diagram
+NYC Open Data API
+        ↓
+Prefect (Orchestration)
+        ↓
+GCS (Data Lake)
+        ↓
+BigQuery (Data Warehouse)
+        ↓
+dbt (Transformations)
+        ↓
+Looker Studio (Dashboard)
 
-
-
-
-
-## Technologies
-Google Cloud Platform (GCP)
-Terraform 
-Data Load Tool (dlt)  
-Prefect  
-Google Cloud Storage (GCS)  
-BigQuery  
-Data Build Tool (dbt)  
-Looker Studio  
-Docker
-
-GIT  
-gcloud CLI  
-python  
-envirionment variables
-
-
-
-
-
-## Cloud Platform
-Google Cloud Platform (GCP) as the primary cloud provider
-
-### Infrastructure as Code
-terraform provisions and manages Google Cloud Platform Resources (Google Cloud Service bucket, BigQuery dataset, IAM roles)
-
-### Orchestration
-prefect automates and schdules the extract, load, transform workflow.
-
-
-
-
-
-## Data pipeline architecture diagram
 <img width="698" height="1516" alt="mermaid-diagram" src="https://github.com/user-attachments/assets/3c8146a3-87c2-4966-8460-7b68785c0b4f" />
 
 
-### Data Ingestion batch
-data load tool (dlt) extracts data from the NYC 311 API and loads it into cloud storage and BigQuery, using python as the core scripting language
+## Technologies Used
+Cloud & Infrastructure
+- Google Cloud Platform (GCP)
+- Terraform (Infrastructure as Code)
 
-### Data Lake
-Google Cloud Storage (GCS), as the data lake, stores raw partitioned parquet files
-
-### Data Warehouse
-BigQuery, as the data warehouse, is a scalable analytics warehouse partitioned by created_date and clustered by borough and complaint_type
-
-### Data Transformation
-using the data build tool (dbt) to clean, model, aggregate data into analytics-ready tables
-using dbt bigquery adapter to connect dbt to BigQuery
+Data Engineering
+- Python
+- dlt (Data Load Tool)
+- Prefect (workflow orchestration)
+- dbt (data transformation)
 
 
+Storage & Warehousing
+- Google Cloud Storage (GCS)
+- BigQuery
+
+Visualization
+- Looker Studio
+
+DevOps & Environment
+- Docker
+- Git
+- gcloud CLI
+- Environment Variables
+
+## Setup Instructions
+### Prerequisites
+- Google Cloud Account
+- Python 3.11
+- Docker 
+- Terraform 
+- dbt
+- gcloud CLI configured
+
+### Cloud Setup (GCP)
+1. Go to google cloud console and at the top, click project dropdown, new project
+2. Fill in project name (name of your choice) and organization (default), create
+3. Go to APIs & Services, Library, search and enable BigQuery API and Cloud Storage API
+4. install gcloud cli from https://cloud.google.com/sdk/docs/install and authenticate by running "gcloud auth application-default login" in powershell / cmd
 
 
-## Dashboard visualization
-looker studio is  an interactive dashboard for exploring NYC 311 trends.
+### Infrastructure as Code (Terraform)
+provision all cloud resources, run in powershell / cmd.
+1. Install terraform CLI from https://developer.hashicorp.com/terraform/downloads
+2. Open terminal, cd into folder that contains terraform code, cd path\to\project
+3. run cd terraform/
+4. run terraform init
+5. run terraform apply
+6. so far, we have a GCS bucket (data lake with raw files), BigQuery dataset (analytics storage), IAM roles (permissions)
+ 
 
-tile 1 - categorical; bar chart showing the count of records per category; ex: top complaint type
+### Environment Configuration
+Create an .env file and add to gitignore
+write this out in a terminal:
+GCP_PROJECT_ID=your_project_id
+BUCKET_NAME=your_bucket_name
+DATASET_NAME=your_dataset
+replace the 3 variable names with your names
 
-tile 2 - temporal; line chart showing trends over time; ex: number of complaints over a time period
+
+## Data Pipeline
+### Pipeline Type (Batch Processing)
+This pipeline uses batch processing because:
+- NYC 311 data updates periodically
+- historical analysis is required
+- real-time streaming is not necessary
+
+### Workflow Orchestration (Prefect)
+Prefect is used to orchestrate the pipeline:
+- schedule batch jobs
+- manages task dependencies
+- handles retries and failures
+
+### Data Lake (GCS)
+- data is extracted using dlt
+- source: NYC Open Data API
+- output format: parquet
+
+raw data is stored in:
+gs://<bucket-name>/raw/YYYY/MM/data.parquet
+
+### Data Warehouse BigQuery
+BigQuery is used for analytical queries
+Table Design
+fact_311_requests
+Partitioned by:
+
+DATE(created_date)
+Clustered by:
+borough, complaint_type
+
+- faster queries
+- reduced cost
+- optimized for analytics
+
+### Data Transformation (dbt)
+dbt transforms raw data into analytics-ready models
+Models:
+stg_311_requests
+- cleans and standardizes raw data
+fct_311_requests
+- adds derived columns (date, response time)
+mart tables
+- complaint trends
+- borough-level summaries
+
+### Dashboard Visualization
+interactive dashboard built with looker studio that enables users to explore NYC 311 trends.
+
+Tile 1 Categorical Distribution
+Bar Chart: Complaint Types
+- shows the most common complaint type categories
+- helps identify major urban issues
+
+Tile 2 Temporal Trends
+Line Chart: Complaints over Time
+- displays daily complaint volume
+- highlights trends and seasonality
+
+## Running the Pipeline
+### Using Docker
+to build and run the container: (in terminal, cd to project root directory and run...)
+docker build -t nyc-311-pipeline
+docker run nyc-311-pipeline
+
+### Execute Prefect Flow
+install prefect, create deployment
+in terminal, cd to project root directory...
+prefect deployment run <flow-name>
 
 
+### Run dbt models
+cd dbt/
+dbt run (builds tables/models in BigQuery)
+dbt test (validates test quality)
+
+## Sample Output Screenshots
+<img width="1536" height="1024" alt="NYC 311 analytics png" src="https://github.com/user-attachments/assets/84f4609a-680c-4bf5-b538-79d4db51d4f1" />
 
 
-
-## How to set up and run the pipeline with docker
-uses docker (containerization) to ensure reproducible local development environment.
+## Final Notes
+This project demonstrates:
+- End-to-end data engineering workflow
+- Cloud-native architecture
+- Infrastructure as Code
+- Batch data processing
+- Data modeling and transformation
+- Business intelligence visualization
