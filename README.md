@@ -14,11 +14,11 @@
   * [Environment Configuration](#environment-configuration)
 
 * [Data Pipeline](#data-pipeline)
-  * [Pipeline Type (Batch Processing)](#pipeline-batch-processing)
-  * [Workflow Orchestration (Prefect)](#prefect)
-  * [Data Lake (GCS)](#data-lake-gcs)
-  * [Data Warehouse (BigQuery)](#data-warehouse-bigquery)
-  * [Data Transformation (dbt) ](#data-transformation-dbt)
+  * [Pipeline Type Batch Processing](#pipeline-batch-processing)
+  * [Workflow Orchestration Prefect](#workflow-orchestration-prefect)
+  * [Data Lake GCS](#data-lake-gcs)
+  * [Data Warehouse BigQuery](#data-warehouse-bigquery)
+  * [Data Transformation dbt](#data-transformation-dbt)
    
 * [Dashboard Visualization](#dashboard-visualization)
   * [Dashboard Overview](#dashboard-overview)
@@ -27,10 +27,10 @@
 
 * [Running the Pipeline](#running-the-pipeline)
   * [Using Docker](#using-docker)
-  * [Execute prefect flow](#executing-airflow-dag)
-  * [Run dbt Models](#running-dbt-models)
+  * [Execute prefect flow](#execute-prefect-flow)
+  * [Run dbt Models](#run-dbt-models)
   
-* [Sample Output Screenshots](#how-to-set-up-and-run-the-pipeline-with-docker)
+* [Sample Output Screenshots](#sample-output-screenshots)
 * [Final Notes](#final-notes)
 
 
@@ -116,14 +116,14 @@ DevOps & Environment
 - dbt
 - gcloud CLI configured
 
-### Cloud Setup (GCP)
+### Cloud Setup GCP
 1. Go to google cloud console and at the top, click project dropdown, new project
 2. Fill in project name (name of your choice) and organization (default), create
 3. Go to APIs & Services, Library, search and enable BigQuery API and Cloud Storage API
 4. install gcloud cli from https://cloud.google.com/sdk/docs/install and authenticate by running "gcloud auth application-default login" in powershell / cmd
 
 
-### Infrastructure as Code (Terraform)
+### Infrastructure as Code Terraform
 provision all cloud resources, run in powershell / cmd.
 1. Install terraform CLI from https://developer.hashicorp.com/terraform/downloads
 2. Open terminal, cd into folder that contains terraform code, cd path\to\project
@@ -143,19 +143,19 @@ replace the 3 variable names with your names
 
 
 ## Data Pipeline
-### Pipeline Type (Batch Processing)
+### Pipeline Type Batch Processing
 This pipeline uses batch processing because:
 - NYC 311 data updates periodically
 - historical analysis is required
 - real-time streaming is not necessary
 
-### Workflow Orchestration (Prefect)
+### Workflow Orchestration Prefect
 Prefect is used to orchestrate the pipeline:
 - schedule batch jobs
 - manages task dependencies
 - handles retries and failures
 
-### Data Lake (GCS)
+### Data Lake GCS
 - data is extracted using dlt
 - source: NYC Open Data API
 - output format: parquet
@@ -177,7 +177,7 @@ borough, complaint_type
 - reduced cost
 - optimized for analytics
 
-### Data Transformation (dbt)
+### Data Transformation dbt
 dbt transforms raw data into analytics-ready models
 Models:
 stg_311_requests
