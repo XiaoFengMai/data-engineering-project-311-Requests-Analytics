@@ -189,7 +189,8 @@ mart tables
 - borough-level summaries
 
 ## Dashboard Visualization
-### interactive dashboard built with looker studio that enables users to explore NYC 311 trends.
+### Dashboard Overview
+interactive dashboard built with looker studio that enables users to explore NYC 311 trends.
 
 ### Tile 1 Categorical Distribution
 Bar Chart: Complaint Types
