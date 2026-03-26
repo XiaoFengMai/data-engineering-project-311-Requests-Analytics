@@ -45,7 +45,7 @@ As New York City's population grows, so does the volume of 311 requests. This cr
 - Decision-making becomes reactive instead of data-driven
 Without an automated system, analysts must manually download, clean, and aggregate data, resulting in inefficient workflows and limited insight generation.
   
-The goal is to build a scalable, cloud-based end-to-end data pipeline that transforms raw NYC 311 service request data into clean, analytics-ready datasets and actionable insights.
+The goal is to build a scalable, cloud-based end-to-end data pipeline that transforms raw NYC 311 service request data into clean, analytics-ready datasets and actionable insights that can be used to analyze trends over time.
   
 
 ## Project Objectives 
