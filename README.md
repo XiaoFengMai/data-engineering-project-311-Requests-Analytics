@@ -5,11 +5,11 @@
 * [Project Objectives](#project-objectives)
 * [Architecture Diagram](#architecture-diagram)
 
-* [Technologies used](#technologies)
+* [Technologies Used](#technologies-used)
   
 * [Setup Instructions](#setup-instructions)
   * [Prerequisites](#prerequisites)
-  * [Cloud Setup (GCP)](#cloud-setup-gcp)
+  * [Cloud Setup (GCP)](#cloud-setup-(gcp))
   * [Infrastructure as Code (Terraform)](#infrastructure-as-code-terraform)
   * [Environment Configuration](#environment-configuration)
 
