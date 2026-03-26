@@ -201,7 +201,7 @@ an interactive dashboard built with looker studio that enables users to explore 
 
 ### Tile 1 Categorical Distribution
 Bar Chart: Top Complaint Types
-- shows the most common 311 complaint type categories 
+- shows the most common 311 complaint type/borough categories 
 - helps identify high prority urban issues
 
 ### Tile 2 Temporal Trends
