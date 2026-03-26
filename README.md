@@ -196,7 +196,10 @@ mart tables
 ## Dashboard Visualization
 ### Dashboard Overview
 an interactive dashboard built with looker studio that enables users to explore NYC 311 trends.
-<img width="838" height="2616" alt="image" src="https://github.com/user-attachments/assets/09c28be2-f6b3-4c51-814e-c94ddde50f0c" />
+
+<img width="961" height="589" alt="image" src="https://github.com/user-attachments/assets/f1a53d34-11d3-4362-9d3c-21452a43186a" />
+<img width="933" height="523" alt="image" src="https://github.com/user-attachments/assets/c0369fa1-4e0e-41e7-934a-d9ed5526408c" />
+
 
 
 ### Tile 1 Categorical Distribution
