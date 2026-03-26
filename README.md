@@ -14,7 +14,7 @@
   * [Environment Configuration](#environment-configuration)
 
 * [Data Pipeline](#data-pipeline)
-  * [Pipeline Type Batch Processing](#pipeline-batch-processing)
+  * [Pipeline Type Batch Processing](#pipeline-type-batch-processing)
   * [Workflow Orchestration Prefect](#workflow-orchestration-prefect)
   * [Data Lake GCS](#data-lake-gcs)
   * [Data Warehouse BigQuery](#data-warehouse-bigquery)
