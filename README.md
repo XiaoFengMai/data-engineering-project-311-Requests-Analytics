@@ -11,7 +11,6 @@
   * [Prerequisites](#prerequisites)
   * [Cloud Setup GCP](#cloud-setup-gcp)
   * [Infrastructure as Code Terraform](#infrastructure-as-code-terraform)
-  * [Environment Configuration](#environment-configuration)
 
 * [Data Pipeline](#data-pipeline)
   * [Pipeline Type Batch Processing](#pipeline-type-batch-processing)
@@ -26,6 +25,8 @@
   * [Tile 2: Temporal Trends](#tile-2-temporal-trends)
 
 * [Running the Pipeline](#running-the-pipeline)
+  * [Clone the Repository](#Clone-the-Repository)
+  * [Configure Environment Variables](#configure-environment-variables)
   * [Using Docker](#using-docker)
   * [Execute prefect flow](#execute-prefect-flow)
   * [Run dbt Models](#run-dbt-models)
@@ -87,15 +88,20 @@ Cloud & Infrastructure
 - Google Cloud Platform (GCP)
 - Terraform (Infrastructure as Code)
 
-Data Engineering
+Orchestration
+- prefect
+
+Data Ingestion
 - Python
 - dlt (Data Load Tool)
-- Prefect (workflow orchestration)
-- dbt (data transformation)
 
+Data Transformation
+- dbt (data build tool)
 
-Storage & Warehousing
+Storage
 - Google Cloud Storage (GCS)
+
+Data Warehouse
 - BigQuery
 
 Visualization
@@ -109,54 +115,51 @@ DevOps & Environment
 
 ## Setup Instructions
 ### Prerequisites
-- Google Cloud Account
-- Python 3.11
-- Docker 
-- Terraform 
-- dbt
-- gcloud CLI configured
+ensure that the following are installed and configured before proceeding
+- Python 3.11 https://www.python.org/downloads/
+- Docker Latest version https://docs.docker.com/get-docker/
+- Terraform Latest version https://developer.hashicorp.com/terraform/downloads
+- dbt version 1.7+ https://docs.getdbt.com/docs/core/installation
+- Git Latest version https://git-scm.com/downloads
+- gcloud CLI Latest version https://cloud.google.com/sdk/docs/install
+- Google Cloud Account with billing enabled
+  - see google cloud setup below
 
 ### Cloud Setup GCP
 1. Go to google cloud console and at the top, click project dropdown, new project
 2. Fill in project name (name of your choice) and organization (default), create
 3. Go to APIs & Services, Library, search and enable BigQuery API and Cloud Storage API
-4. install gcloud cli from https://cloud.google.com/sdk/docs/install and authenticate by running "gcloud auth application-default login" in powershell / cmd
+4. authenticate gcloud CLI locally by running "gcloud auth application-default login" in powershell / cmd
+5. set active project by running "gcloud config set project YOUR_PROJECT_ID"
 
 
 ### Infrastructure as Code Terraform
-provision all cloud resources, run in powershell / cmd.
+provisions GCS bucket (data lake), BigQuery dataset, and IAM roles automatically run in powershell / cmd.
 1. Install terraform CLI from https://developer.hashicorp.com/terraform/downloads
 2. Open terminal, cd into folder that contains terraform code, cd path\to\project
-3. run cd terraform/
-4. run terraform init
-5. run terraform apply
-6. so far, we have a GCS bucket (data lake with raw files), BigQuery dataset (analytics storage), IAM roles (permissions)
+3. run cd terraform/ (navigate to terraform directory)
+4. run terraform init (initialize terraform, downloads required providers)
+5. run terraform plan (preview resources that will be created)
+6. run terraform apply (create all cloud resources)
+7. when prompted, type yes to confirm.
+8. after running the above, we have a GCS bucket (data lake with raw files), BigQuery dataset (analytics storage), IAM roles (permissions)
  
-
-### Environment Configuration
-Create an .env file and add to gitignore
-write this out in a terminal:
-GCP_PROJECT_ID=your_project_id
-BUCKET_NAME=your_bucket_name
-DATASET_NAME=your_dataset
-replace the 3 variable names with your names
-
 
 ## Data Pipeline
 ### Pipeline Type Batch Processing
 This pipeline uses batch processing because:
 - NYC 311 data updates periodically
-- historical analysis is required
-- real-time streaming is not necessary
+- historical analysis is required (data dates back to 2020)
+- real-time streaming is not necessary for this use case
 
 ### Workflow Orchestration Prefect
-Prefect is used to orchestrate the pipeline:
-- schedule batch jobs
-- manages task dependencies
-- handles retries and failures
+Prefect orchestrates the pipeline by:
+- scheduling batch jobs
+- managing task dependencies across extract, load, and transform steps
+- handling retries and failure notifications automatically
 
 ### Data Lake GCS
-- data is extracted using dlt
+- data is extracted using dlt (data load tool)
 - source: NYC Open Data API
 - output format: parquet
 
@@ -165,51 +168,76 @@ gs://<bucket-name>/raw/YYYY/MM/data.parquet
 
 ### Data Warehouse BigQuery
 BigQuery is used for analytical queries
-Table Design
-fact_311_requests
+Table Design - fact_311_requests:
+to reduce data scanned for time-range queries:
 Partitioned by:
+DATE(created_date) 
 
-DATE(created_date)
+to speed up filtered aggregations by location and category
 Clustered by:
 borough, complaint_type
 
+this is done for:
 - faster queries
 - reduced cost
 - optimized for analytics
 
 ### Data Transformation dbt
-dbt transforms raw data into analytics-ready models
+dbt transforms raw BigQuery data into analytics-ready models
 Models:
 stg_311_requests
-- cleans and standardizes raw data
+- cleans and standardizes raw data (types, nulls, naming)
 fct_311_requests
-- adds derived columns (date, response time)
+- adds derived columns (parsed date parts, response time in hours)
 mart tables
-- complaint trends
-- borough-level summaries
+- mart_complaint_trends: aggregated complaint coutns by type and date 
+- mart_borough_summary: borough-level summaries for geographic analysis
 
 ## Dashboard Visualization
 ### Dashboard Overview
-interactive dashboard built with looker studio that enables users to explore NYC 311 trends.
+an interactive dashboard built with looker studio that enables users to explore NYC 311 trends.
+<img width="838" height="2616" alt="image" src="https://github.com/user-attachments/assets/09c28be2-f6b3-4c51-814e-c94ddde50f0c" />
+
 
 ### Tile 1 Categorical Distribution
-Bar Chart: Complaint Types
-- shows the most common complaint type categories
-- helps identify major urban issues
+Bar Chart: Top Complaint Types
+- shows the most common 311 complaint type categories 
+- helps identify high prority urban issues
 
 ### Tile 2 Temporal Trends
-Line Chart: Complaints over Time
-- displays daily complaint volume
-- highlights trends and seasonality
+Line Chart: Daily Complaint Volume over Time
+- displays daily complaint counts from 2020 to present
+- highlights seasonal patterns, spikes, trends and seasonality
 
 ## Running the Pipeline
+Follow these steps in order to reproduce the full pipeline from scratch
+### Clone the Repository
+git clone https://github.com/YOUR_USERNAME/nyc-311-pipeline.git
+cd nyc-311-pipeline
+
+### Create Environment Varibles
+1. The .env file is listed in .gitignore and will not be committed to version control. never share credentials
+2. A reference file .env.example is included in the repository with placeholder values
+3. Copy the example environment file: cp .env.example .env
+4. Open .env and fill in your values:
+5. GCP_PROJECT_ID=your_project_id        # e.g. nyc-311-analytics-123456
+BUCKET_NAME=your_bucket_name          # e.g. nyc-311-raw-data
+DATASET_NAME=your_dataset_name        # e.g. nyc_311_warehouse
+NO JSON key required. Application default credentials via gcloud is sufficient for local development
+
 ### Using Docker
-to build and run the container: (in terminal, cd to project root directory and run...)
-docker build -t nyc-311-pipeline
-docker run nyc-311-pipeline
+Docker packages all dependencies so no manual python environment setup is needed. This project uses authentication default credentials (ADC) so you mount your local gcloud credentials into container at runtime
+to build and run the container with environment variables and ADC credentials mounted: (in powershell, cd to project root directory and run...)
+docker build -t nyc-311-pipeline .
+docker run --env-file .env `
+  -v "$env:APPDATA\gcloud:/root/.config/gcloud:ro" `
+  nyc-311-pipeline
 
 ### Execute Prefect Flow
 install prefect, create deployment
+pip install prefect
+prefect server start
+deployment yaml
 in terminal, cd to project root directory...
 prefect deployment run <flow-name>
 
