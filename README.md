@@ -187,7 +187,7 @@ dbt transforms raw BigQuery data into analytics-ready models
 Models:
 stg_311_requests
 - cleans and standardizes raw data (types, nulls, naming)
-fct_311_requests
+fact_311_requests
 - adds derived columns (parsed date parts, response time in hours)
 mart tables
 - mart_complaint_trends: aggregated complaint coutns by type and date 
