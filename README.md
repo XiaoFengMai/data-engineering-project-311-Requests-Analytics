@@ -10,7 +10,7 @@
 * [Setup Instructions](#setup-instructions)
   * [Prerequisites](#prerequisites)
   * [Cloud Setup GCP](#cloud-setup-gcp)
-  * [Infrastructure as Code (Terraform)](#infrastructure-as-code-terraform)
+  * [Infrastructure as Code Terraform](#infrastructure-as-code-terraform)
   * [Environment Configuration](#environment-configuration)
 
 * [Data Pipeline](#data-pipeline)
