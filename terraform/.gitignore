@@ -1,13 +1,20 @@
-# tells git which files and folders to exclude from version control
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+env/
 
-# excludes terraform directory because they are large and easily regenerated
+# Credentials & Config (CRITICAL)
+.env
+*.json
+!service_requests.json  # Only if you have a non-secret sample file
+
+# Terraform
 .terraform/
+*.tfstate
+*.tfstate.backup
 
-# excludes all terraform state files which contain sensitive data and should never be stored in source control
-*.tfstate    
-
-# contain sensitive data
-*.tfstate.backup            
-
-# holds environment specific config like API keys, credentials that should never be committed.
-terraform.tfvars                
+# dbt
+target/
+dbt_packages/
+logs/
