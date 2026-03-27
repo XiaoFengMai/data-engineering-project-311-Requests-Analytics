@@ -193,6 +193,7 @@ mart_borough_summary: borough-level summaries for geographic analysis
 ## Dashboard Visualization
 ### Dashboard Overview
 an interactive dashboard built with looker studio that enables users to explore NYC 311 trends.
+while the primary dashboard is hosted on looker studio, a local streamlit version is provided for easy reproducibility. To view it locally, run: streamlit run dashboard.py.
 
 <img width="961" height="589" alt="image" src="https://github.com/user-attachments/assets/f1a53d34-11d3-4362-9d3c-21452a43186a" />
 <img width="933" height="523" alt="image" src="https://github.com/user-attachments/assets/c0369fa1-4e0e-41e7-934a-d9ed5526408c" />
