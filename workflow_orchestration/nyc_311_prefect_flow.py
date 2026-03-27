@@ -1,29 +1,40 @@
-# defines a two step pipeline that runs run_ingestion() first and run_dbt() second
-
-# flow makes a function as the main pipeline and task makes a function as an individual step within the pipeline
+import os
+import dlt
+import requests
 from prefect import flow, task
+from dotenv import load_dotenv
 
-# subprocess module allows you to run command lines from within python code
-import subprocess
+# Load variables from .env file
+load_dotenv()
 
+@task(retries=3, retry_delay_seconds=60)
+def fetch_311_data():
+    """Fetch raw data from NYC Open Data API"""
+    url = "https://data.cityofnewyork.us/resource/erm2-nwe9.json"
+    # Filter for last 24 hours or a specific limit for testing
+    params = {"$limit": 5000, "$order": "created_date DESC"}
+    
+    response = requests.get(url, params=params)
+    response.raise_for_status()
+    return response.json()
 
-# a prefect decorator that registers the function below it as an individual pipeline task which give sthe function prefect features like logging, retries, and state tracking
-@task
-def run_ingestion():
-    subprocess.run(["python", "ingestion_pipeline/nyc_311_pipeline.py"], check=True)            # runs the ingestion script as a command line process, equivalent to typing in terminal
+@flow(name="NYC 311 Ingestion")
+def run_ingestion_pipeline():
+    # Fetch values from environment
+    project_id = os.getenv("GCP_PROJECT_ID")
+    dataset_name = os.getenv("DATASET_NAME", "nyc_311_raw")
+    
+    data = fetch_311_data()
+    
+    # Configure dlt to use BigQuery via environment variables
+    pipeline = dlt.pipeline(
+        pipeline_name="nyc_311_ingestion",
+        destination='bigquery',
+        dataset_name=dataset_name
+    )
+    
+    load_info = pipeline.run(data, table_name="service_requests")
+    print(load_info)
 
-
-# once again, registers the function below as a prefect task
-@task
-def run_dbt():             
-    subprocess.run(["dbt", "run"], cwd="data_build_tool/", check=True)                # runs the dbt transformation command
-
-
-# prefect decorator that registers the function below as the main pipeline flow
-@flow        
-def nyc_pipeline():               # defines flow function that control the order tasks run in
-    ingestion = run_ingestion()            # runs the ingestion task first and stores result in ingestion, prefect uses this result to track when task has completed
-    run_dbt(wait_for=[ingestion])                # runs the dbt task but only after ingestion task has completed, ensures dbt does not run on incomplete data
-
-if __name__ == "__main__":             # standard python guard that ensures pipeline only runs when this file is executed
-    nyc_pipeline()                            # triggers entire pipeline flow when file is run directly
+if __name__ == "__main__":
+    run_ingestion_pipeline()
