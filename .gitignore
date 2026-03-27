@@ -1,1 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+env/
+
+# Credentials & Config (CRITICAL)
 .env
+*.json
+!service_requests.json  # Only if you have a non-secret sample file
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.backup
+
+# dbt
+target/
+dbt_packages/
+logs/
