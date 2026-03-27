@@ -35,6 +35,7 @@
 * [Final Notes](#final-notes)
 
 
+  
 ## Problem Statement
 Large cities like New York generate thousands of service requests daily through the 311 system. These requests cover a wide range of urban issues, including noise complaints, sanitation problems, housing concerns, and infrastructure failures.
 
@@ -46,7 +47,8 @@ As New York City's population grows, so does the volume of 311 requests. This cr
 Without an automated system, analysts must manually download, clean, and aggregate data, resulting in inefficient workflows and limited insight generation.
   
 The goal is to build a scalable, cloud-based end-to-end data pipeline that transforms raw NYC 311 service request data into clean, analytics-ready datasets and actionable insights that can be used to analyze trends over time.
-  
+
+    
 
 ## Project Objectives 
 Build a data pipeline that
@@ -66,6 +68,7 @@ Use dbt to clean, model, and aggregate data into analytics-ready tables.
 Build an interactive dashboard to explore complaint trends across time and categories.
 
 
+  
 
 ## Architecture Diagram
 NYC Open Data API
@@ -83,6 +86,7 @@ Looker Studio (Dashboard)
 <img width="698" height="1516" alt="mermaid-diagram" src="https://github.com/user-attachments/assets/3c8146a3-87c2-4966-8460-7b68785c0b4f" />
 
 
+  
 ## Technologies Used
 Cloud & Infrastructure
 - Google Cloud Platform (GCP)
@@ -113,6 +117,7 @@ DevOps & Environment
 - gcloud CLI
 - Environment Variables
 
+  
 ## Setup Instructions
 ### Prerequisites
 ensure that the following are installed and configured before proceeding
@@ -125,6 +130,8 @@ ensure that the following are installed and configured before proceeding
 - Google Cloud Account with billing enabled
   - see google cloud setup below
 
+
+    
 ### Cloud Setup GCP
 1. Go to google cloud console and at the top, click project dropdown, new project
 2. Fill in project name (name of your choice) and organization (default), create
@@ -133,6 +140,7 @@ ensure that the following are installed and configured before proceeding
 5. set active project by running "gcloud config set project YOUR_PROJECT_ID"
 
 
+  
 ### Infrastructure as Code Terraform
 provisions GCS bucket (data lake), BigQuery dataset, and IAM roles automatically run in powershell / cmd.
 1. Install terraform CLI from https://developer.hashicorp.com/terraform/downloads
@@ -143,8 +151,8 @@ provisions GCS bucket (data lake), BigQuery dataset, and IAM roles automatically
 6. run terraform apply (create all cloud resources)
 7. when prompted, type yes to confirm.
 8. after running the above, we have a GCS bucket (data lake with raw files), BigQuery dataset (analytics storage), IAM roles (permissions)
- 
 
+   
 ## Data Pipeline
 ### Pipeline Type Batch Processing
 This pipeline uses batch processing because:
@@ -152,19 +160,22 @@ This pipeline uses batch processing because:
 - historical analysis is required (data dates back to 2020)
 - real-time streaming is not necessary for this use case
 
+  
 ### Workflow Orchestration Prefect
 Prefect orchestrates the pipeline by:
 - scheduling batch jobs
 - managing task dependencies across extract, load, and transform steps
 - handling retries and failure notifications automatically
 
+  
 ### Data Lake GCS
 - data is extracted using dlt (data load tool)
 - source: NYC Open Data API
 - output format: parquet
 
 raw data is stored in:
-gs://<bucket-name>/raw/YYYY/MM/data.parquet
+gs://<bucket-name>/raw/YYYY/MM/data.parquet  
+
 
 ### Data Warehouse BigQuery
 BigQuery is used for analytical queries
@@ -181,6 +192,7 @@ this is done for:
 - faster queries
 - reduced cost
 - optimized for analytics
+- 
 
 ### Data Transformation dbt
 dbt transforms raw BigQuery data into analytics-ready models
@@ -188,7 +200,8 @@ Models:
 stg_311_requests cleans and standardizes raw data (types, nulls, naming)
 fact_311_requests adds derived columns (parsed date parts, response time in hours)    
 mart_complaint_trends: aggregated complaint coutns by type and date 
-mart_borough_summary: borough-level summaries for geographic analysis
+mart_borough_summary: borough-level summaries for geographic analysis  
+
 
 ## Dashboard Visualization
 ### Dashboard Overview
@@ -196,7 +209,8 @@ an interactive dashboard built with looker studio that enables users to explore 
 while the primary dashboard is hosted on looker studio, a local streamlit version is provided for easy reproducibility. To view it locally, run: streamlit run dashboard.py.
 
 <img width="961" height="589" alt="image" src="https://github.com/user-attachments/assets/f1a53d34-11d3-4362-9d3c-21452a43186a" />
-<img width="933" height="523" alt="image" src="https://github.com/user-attachments/assets/c0369fa1-4e0e-41e7-934a-d9ed5526408c" />
+<img width="933" height="523" alt="image" src="https://github.com/user-attachments/assets/c0369fa1-4e0e-41e7-934a-d9ed5526408c" />  
+
 
 
 
@@ -208,13 +222,14 @@ Bar Chart: Top Complaint Types
 ### Tile 2 Temporal Trends
 Line Chart: Daily Complaint Volume over Time
 - displays daily complaint counts from 2020 to present
-- highlights seasonal patterns, spikes, trends and seasonality
+- highlights seasonal patterns, spikes, trends and seasonality 
 
 ## Running the Pipeline
 Follow these steps in order to reproduce the full pipeline from scratch
 ### Clone the Repository
 git clone https://github.com/YOUR_USERNAME/nyc-311-pipeline.git
-cd nyc-311-pipeline
+cd nyc-311-pipeline  
+
 
 ### Create Environment Varibles
 1. The .env file is listed in .gitignore and will not be committed to version control. never share credentials
@@ -229,11 +244,14 @@ NO JSON key required. Application default credentials via gcloud is sufficient f
 ### Using Docker
 Docker packages all dependencies so no manual python environment setup is needed. This project uses authentication default credentials (ADC) so you mount your local gcloud credentials into container at runtime
 to build and run the container with environment variables and ADC credentials mounted: (in powershell, cd to project root directory and run...)
-docker build -t nyc-311-pipeline .
-docker run --env-file .env `
-  -v "$env:APPDATA\gcloud:/root/.config/gcloud:ro" `
-  nyc-311-pipeline
 
+docker build -t nyc-311-pipeline .
+
+docker run -p 8501:8501 --env-file .env `
+  -v "$env:APPDATA\gcloud:/root/.config/gcloud:ro" `
+  nyc-311-pipeline  
+
+    
 ### Execute Prefect Flow
 install prefect, create deployment
 pip install prefect
