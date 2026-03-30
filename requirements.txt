@@ -1,18 +1,22 @@
-# Data Ingestion & Transformation
-pandas==2.2.1
+# ============================================================
+# NYC 311 Data Pipeline — Root Dependencies
+# ============================================================
+
+# Data Ingestion
 requests==2.31.0
-dlt
-dlt[bigquery]==0.4.5
+pandas==2.2.1
+dlt[bigquery]==0.4.5          # FIX: removed bare 'dlt' line; dlt[bigquery] already includes dlt core
 google-cloud-bigquery==3.17.2
 python-dotenv
 
 # Workflow Orchestration
 prefect==2.14.20
 
-# Data Build Tool (dbt)
+# Data Build Tool
 dbt-core==1.7.9
 dbt-bigquery==1.7.6
 
 # Dashboard / Visualization
 streamlit==1.32.0
 plotly==5.19.0
+numpy==1.26.4                 # added explicitly; used in dashboard.py sample data generation
