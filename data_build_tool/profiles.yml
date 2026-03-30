@@ -3,9 +3,11 @@ nyc_311_project:
     dev:
       type: bigquery
       method: oauth
-      # dbt will look for GCP_PROJECT_ID in your .env or system environment
+  # dbt will look for GCP_PROJECT_ID in your .env or system environment, uses ADC so no JSON key needed
       project: "{{ env_var('GCP_PROJECT_ID') }}"
+  # reads from your .env file
       dataset: "{{ env_var('DATASET_NAME') }}"
+  # the bigquery dataset where dbt writes models
       threads: 4
       timeout_seconds: 300
       location: US
