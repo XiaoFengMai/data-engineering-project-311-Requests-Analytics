@@ -30,7 +30,6 @@
 
   
 * [Dashboard](#dashboard)
-* [Sample Output Screenshots](#sample-output-screenshots)
 * [Final Notes](#final-notes)
 
 ---
@@ -407,8 +406,6 @@ The Streamlit dashboard includes:
 
 ---
 
-## Sample Output Screenshots
-<img width="1536" height="1024" alt="NYC 311 analytics png" src="https://github.com/user-attachments/assets/84f4609a-680c-4bf5-b538-79d4db51d4f1" />
 
 
 ## Final Notes
