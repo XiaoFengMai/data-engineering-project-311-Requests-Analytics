@@ -1,21 +1,29 @@
-name: nyc_311_project       # name of dbt project 
-version: 1.0            # project version number
-config-version: 2       # configuration syntax version 2 is modern standard for dbt projects
+name: nyc_311_project
+version: '1.0.0'
+config-version: 2
 
-profile: 'nyc_311_project'    # notifies dbt of what database connection configuration to use
+profile: 'nyc_311_project'   # must match the profile name in profiles.yml
 
-model-paths: ["models"]    # specifies the folder where dbt should look for SQL models
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]        # generic SQL tests live in tests/
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
 
-models:              # below is the structure showcasing how models are built 
-  nyc_311_project:    # must match the project name above
+target-path: "target"
+clean-targets:
+  - "target"
+  - "dbt_packages"
 
+models:
+  nyc_311_project:
     staging:
-      materialized: view    # models inside models/staging become lightweight database viwws that reflect latest data 
-                            # staging = view mirror raw data without heavy computation
-
+      +materialized: view       # lightweight views that mirror raw data; rebuilt on every dbt run
+      +schema: staging
     intermediate:
-      materialized: view    # intermediate models also become views that contain logic and reusable transformations
-
+      +materialized: view       # reusable transformation logic; not exposed to dashboards directly
+      +schema: intermediate
     marts:
-      materialized: table    # models in models/marts also become tables because dashboards query these often
-
+      +materialized: table      # final analytics tables queried by Looker Studio / Streamlit
+      +schema: marts
