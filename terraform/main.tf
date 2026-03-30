@@ -22,7 +22,7 @@ resource "google_storage_bucket" "data_lake_bucket" {
 
 # create data warehouse dataset in bigquery, declares new bigquery dataset resource with resource type and dataset, sets bigquery dataset id
 resource "google_bigquery_dataset" "dataset" {     
-  dataset_id  = var.bq_dataset_name            
+  dataset_id  = var.bigquery_dataset_name            
   location    = var.region         
   description = "NYC 311 analytics dataset"        
 }
