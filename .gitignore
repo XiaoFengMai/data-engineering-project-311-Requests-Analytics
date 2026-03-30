@@ -1,20 +1,36 @@
-# Python
+# ── Python ─────────────────────────────────────────────────────────────────
 __pycache__/
 *.py[cod]
+*.pyo
 .venv/
 env/
+venv/
+.Python
 
-# Credentials & Config (CRITICAL)
+# ── Credentials & secrets (NEVER commit these) ──────────────────────────────
 .env
-*.json
-!service_requests.json  # Only if you have a non-secret sample file
+*.json                    # catches any accidentally saved service account keys
+!.env.example             # keep the example template in git
 
-# Terraform
+# ── Data exports (can be large; regenerate from BigQuery) ──────────────────
+data/*.csv
+data/*.parquet
+
+# ── Terraform ───────────────────────────────────────────────────────────────
 .terraform/
+.terraform.lock.hcl
 *.tfstate
 *.tfstate.backup
+crash.log
 
-# dbt
+# ── dbt ─────────────────────────────────────────────────────────────────────
 target/
 dbt_packages/
 logs/
+
+# ── OS / editor ─────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
