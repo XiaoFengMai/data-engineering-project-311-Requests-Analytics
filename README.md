@@ -111,16 +111,16 @@ You also need a **Google Cloud account with billing enabled**.
 ---  
 
 ### Clone the Repository
- 
 ```bash
 git clone https://github.com/YOUR_USERNAME/nyc-311-pipeline.git
 cd nyc-311-pipeline
-    
+```
+
+
+### Configure Environment variables
 
 ---
 
-### Configure Environment Variables
- 
 The `.env` file holds your GCP credentials. It is listed in `.gitignore` and will never be committed.
  
 ```bash
