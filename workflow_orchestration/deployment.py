@@ -1,12 +1,8 @@
-# this schedule runs the pipeline daily at 2am
+from nyc_311_prefect_flow import run_ingestion_pipeline  # FIX: was 'from nyc_311_flow import nyc_311_flow' — file is nyc_311_prefect_flow.py and the flow function is run_ingestion_pipeline
 
-# imports the pipeline
-from nyc_311_prefect_flow import run_ingestion_pipeline
-
-# standard python guard that ensures this deployment code only runs when the file is executed directly
 if __name__ == "__main__":
-    run_ingestion_pipeline.deploy(                    # calls prefect's built-in deploy method, which registers and configures it with prefect server for scheduled execution
-        name="nyc-311-daily",                    # names the deployment, this is what is displayed in the prefect UI dashboard
-        work_pool_name="default-agent-pool",       # tells prefect which work pool should pick up and execute this flow, agent is a process that listens for scheduled runs and executes them         
-        cron="0 2 * * *"                          # sets the schedule using cron syntax, runs everday at 2am
+    run_ingestion_pipeline.deploy(
+        name="nyc-311-daily",
+        work_pool_name="default-agent-pool",
+        cron="0 2 * * *"               # runs every day at 2 AM UTC
     )
