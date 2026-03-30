@@ -1,13 +1,38 @@
-Raw BigQuery Tables
-        │
-        ▼
-stg_311_requests
-        │
-        ▼
-int_311_cleaned
-        │
-        ▼
-Analytics Marts
-   ├── complaints_by_type
-   ├── complaints_by_borough
-   └── complaints_over_time
+# Data Model — NYC 311 Pipeline
+
+```
+Raw BigQuery Table (loaded by dlt)
+  └── nyc_311_analytics.service_requests
+            │
+            ▼
+  Staging Layer (views)
+  └── stg_311_requests          ← casts types, filters nulls, standardises names
+            │
+            ▼
+  Intermediate Layer (views)
+  └── int_311_cleaned           ← DATE casts, resolution_time_hours, drops null boroughs
+            │
+       ┌────┴─────────────────────────────────┐
+       ▼                                      ▼
+  Marts Layer (tables)               Marts Layer (tables)
+  ├── fact_311_complaints            ├── complaints_by_type
+  │     partitioned by date          ├── complaints_by_borough
+  │     clustered by borough,        └── complaints_over_time
+  │     complaint_type
+  └── dim_borough
+```
+
+## Layer descriptions
+
+| Layer | Materialisation | Purpose |
+|---|---|---|
+| staging | view | 1-to-1 with source; type casts and null filters only |
+| intermediate | view | Business logic, calculated fields, joins |
+| marts | table | Aggregated, dashboard-ready; partitioned & clustered for cost efficiency |
+
+## Key design decisions
+
+- **Partition key:** `DATE(created_date)` — BigQuery only scans the date partitions touched by a query, dramatically reducing cost for time-range filters.
+- **Cluster keys:** `borough, complaint_type` — speeds up `GROUP BY borough` and `GROUP BY complaint_type` aggregations used by every dashboard chart.
+- **Write disposition:** dlt loads with `append` — historical records accumulate without re-fetching old data.
+- **Source of truth:** `stg_311_requests` is the single entry point for all downstream models; nothing reads directly from the raw table.
