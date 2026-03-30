@@ -37,16 +37,13 @@
 
   
 ## Problem Statement
-Large cities like New York generate thousands of service requests daily through the 311 system. These requests cover a wide range of urban issues, including noise complaints, sanitation problems, housing concerns, and infrastructure failures.
-
-As New York City's population grows, so does the volume of 311 requests. This creates several challenges:
-- Raw data is large, unstructured, and difficult to analyze
-- Manual data processing leads to delays and inconsistencies
-- City agencies lack real-time visibility into trends
-- Decision-making becomes reactive instead of data-driven
-Without an automated system, analysts must manually download, clean, and aggregate data, resulting in inefficient workflows and limited insight generation.
-  
-The goal is to build a scalable, cloud-based end-to-end data pipeline that transforms raw NYC 311 service request data into clean, analytics-ready datasets and actionable insights that can be used to analyze trends over time.
+New York City's 311 system receives hundreds of thousands of service requests every month covering noise complaints, sanitation issues, housing concerns, and infrastructure failures. Without an automated pipeline, analysts must manually download, clean, and aggregate this data — resulting in slow, error-prone workflows and limited visibility into trends.
+ 
+This project builds a fully automated, cloud-native end-to-end data pipeline that:
+- Ingests raw 311 data from the NYC Open Data API
+- Stores it in a partitioned, cost-efficient data warehouse
+- Transforms it into analytics-ready models using dbt
+- Exposes insights through an interactive Looker Studio dashboard (with a local Streamlit fallback)
 
     
 
