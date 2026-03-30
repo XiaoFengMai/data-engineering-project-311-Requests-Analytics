@@ -49,20 +49,12 @@ This project builds a fully automated, cloud-native end-to-end data pipeline tha
 
 ## Project Objectives 
 Build a data pipeline that
-1. Extract Data
-Pull NYC 311 service request data (2020–present) from NYC Open Data.
-2. Provision Infrastructure (IaC)
-Use Terraform to create and manage all cloud resources.
-3. Build a Data Lake
-Store raw data in Google Cloud Storage (GCS) in partitioned parquet format.
-4. Load Data into a Data Warehouse
-Ingest structured data into BigQuery for analytical querying.
-5. Orchestrate the Pipeline
-Use Prefect to automate the batch ETL workflow.
-6. Transform Data
-Use dbt to clean, model, and aggregate data into analytics-ready tables.
-7. Visualize Insights
-Build an interactive dashboard to explore complaint trends across time and categories.
+1. **Extract** — Pull NYC 311 service request data (2020–present) from NYC Open Data
+2. **Provision** — Use Terraform to manage all GCP infrastructure as code
+3. **Load** — Ingest structured records into BigQuery via dlt
+4. **Orchestrate** — Schedule and monitor the ETL workflow with Prefect
+5. **Transform** — Clean, model, and aggregate data with dbt
+6. **Visualize** — Build an interactive dashboard on Looker Studio (+ Streamlit locally)
 
 
   
