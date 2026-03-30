@@ -9,28 +9,27 @@
   
 * [Setup Instructions](#setup-instructions)
   * [Prerequisites](#prerequisites)
+  * [Clone the Repository](#clone-the-repository)
+  * [Configure Environment Variables](#configure-environment-variables)
   * [Cloud Setup GCP](#cloud-setup-gcp)
   * [Infrastructure as Code Terraform](#infrastructure-as-code-terraform)
 
-* [Data Pipeline](#data-pipeline)
-  * [Pipeline Type Batch Processing](#pipeline-type-batch-processing)
-  * [Workflow Orchestration Prefect](#workflow-orchestration-prefect)
-  * [Data Lake GCS](#data-lake-gcs)
-  * [Data Warehouse BigQuery](#data-warehouse-bigquery)
-  * [Data Transformation dbt](#data-transformation-dbt)
-   
-* [Dashboard Visualization](#dashboard-visualization)
-  * [Dashboard Overview](#dashboard-overview)
-  * [Tile 1: Categorical Distribution](#tile-1-categorical-distribution)
-  * [Tile 2: Temporal Trends](#tile-2-temporal-trends)
+* [Runnning the Pipeline](#running-the-pipeline)
+  * [Option A Docker](#option-A-docker)
+  * [Option B Local Python](#local-python)
+  * [Run Ingestion Flow Prefect](#run-ingestion-flow-prefect)
+  * [Run dbt transformations](#run-dbt-transformations)
+  * [View the dashboard](#view-the-dashboard)
 
-* [Running the Pipeline](#running-the-pipeline)
-  * [Clone the Repository](#Clone-the-Repository)
-  * [Configure Environment Variables](#configure-environment-variables)
-  * [Using Docker](#using-docker)
-  * [Execute prefect flow](#execute-prefect-flow)
-  * [Run dbt Models](#run-dbt-models)
+
+* [Data Pipeline Detail](#data-pipeline-detail)
+  * [Ingestion](#ingestion)
+  * [Orchestration](#orchestration)
+  * [Data Warehouse Design](#data-warehouse-design)
+  * [dbt tranformations](#dbt-transformations)
+
   
+* [Dashboard](#dashboard)
 * [Sample Output Screenshots](#sample-output-screenshots)
 * [Final Notes](#final-notes)
 
@@ -98,171 +97,313 @@ Looker Studio (Dashboard)
   
 ## Setup Instructions
 ### Prerequisites
-ensure that the following are installed and configured before proceeding
-- Python 3.11 https://www.python.org/downloads/
-- Docker Latest version https://docs.docker.com/get-docker/
-- Terraform Latest version https://developer.hashicorp.com/terraform/downloads
-- dbt version 1.7+ https://docs.getdbt.com/docs/core/installation
-- Git Latest version https://git-scm.com/downloads
-- gcloud CLI Latest version https://cloud.google.com/sdk/docs/install
-- Google Cloud Account with billing enabled
-  - see google cloud setup below
+Install and configure the following before proceeding:
+ 
+| Tool | Version | Link |
+|---|---|---|
+| Python | 3.11+ | https://www.python.org/downloads/ |
+| Docker | Latest | https://docs.docker.com/get-docker/ |
+| Terraform | Latest | https://developer.hashicorp.com/terraform/downloads |
+| gcloud CLI | Latest | https://cloud.google.com/sdk/docs/install |
+| Git | Latest | https://git-scm.com/downloads |
+ 
+You also need a **Google Cloud account with billing enabled**.
 
 ---  
 
+### Clone the Repository
+ 
+```bash
+git clone https://github.com/YOUR_USERNAME/nyc-311-pipeline.git
+cd nyc-311-pipeline
     
-### Cloud Setup GCP
-1. Go to google cloud console and at the top, click project dropdown, new project
-2. Fill in project name (name of your choice) and organization (default), create
-3. Go to APIs & Services, Library, search and enable BigQuery API and Cloud Storage API
-4. authenticate gcloud CLI locally by running "gcloud auth application-default login" in powershell / cmd
-5. set active project by running "gcloud config set project YOUR_PROJECT_ID"
 
+---
+
+### Configure Environment Variables
+ 
+The `.env` file holds your GCP credentials. It is listed in `.gitignore` and will never be committed.
+ 
+```bash
+# Copy the template
+cp .env.example .env
+```
+Open `.env` and fill in your values:
+ 
+```bash
+GCP_PROJECT_ID="your-gcp-project-id"        # e.g. nyc-311-analytics-123456
+GCP_REGION="us-central1"
+BUCKET_NAME="nyc-311-raw-your-unique-suffix" # must be globally unique
+DATASET_NAME="nyc_311_analytics"
+```
+ 
+> **Authentication note:** This project uses **Application Default Credentials (ADC)** — no JSON service account key is needed. After installing the gcloud CLI, run:
+> ```bash
+> gcloud auth application-default login
+> ```
+---
+
+
+### Cloud Setup (GCP)
+ 
+1. Go to the [Google Cloud Console](https://console.cloud.google.com/) and create a new project
+2. Enable the following APIs under **APIs & Services → Library**:
+   - BigQuery API
+   - Cloud Storage API
+3. Set your active project:
+   ```bash
+   gcloud config set project YOUR_PROJECT_ID
+   ```
+ 
+---
+
+### Infrastructure as Code Terraform
+Terraform creates the GCS bucket (data lake) and BigQuery dataset automatically.
+ 
+```bash
+# Navigate to the terraform directory
+cd terraform/
+ 
+# Fill in your values
+cp terraform.tfvars terraform.tfvars   # already exists; open it and edit
+ 
+# Initialise Terraform (downloads the Google provider)
+terraform init
+ 
+# Preview what will be created
+terraform plan
+ 
+# Create the resources (type 'yes' when prompted)
+terraform apply
+```
+ 
+After a successful apply you will see:
+```
+bucket_name      = "nyc-311-raw-your-suffix"
+bigquery_dataset = "nyc_311_analytics"
+```
+ 
+Return to the project root:
+```bash
+cd ..
+```
+ 
+
+---  
+
+
+## Running the Pipeline
+### Option A Docker
+(recommended)
+
+Docker packages all dependencies so no local Python environment is needed.
+ 
+```bash
+# Build the image
+docker build -t nyc-311-pipeline .
+ 
+# Run the Streamlit dashboard
+docker run -p 8501:8501 \
+  --env-file .env \
+  -v "$HOME/.config/gcloud:/root/.config/gcloud:ro" \
+  nyc-311-pipeline
+ 
+# Run the Prefect ingestion flow
+docker run \
+  --env-file .env \
+  -v "$HOME/.config/gcloud:/root/.config/gcloud:ro" \
+  nyc-311-pipeline \
+  python workflow_orchestration/nyc_311_prefect_flow.py
+ 
+# Run dbt transformations
+docker run \
+  --env-file .env \
+  -v "$HOME/.config/gcloud:/root/.config/gcloud:ro" \
+  nyc-311-pipeline \
+  dbt run --profiles-dir .
+```
+ 
+**Windows PowerShell** — replace `$HOME/.config/gcloud` with `$env:APPDATA\gcloud`:
+```powershell
+docker run -p 8501:8501 --env-file .env `
+  -v "$env:APPDATA\gcloud:/root/.config/gcloud:ro" `
+  nyc-311-pipeline
+```
+ 
+---
+
+### Option B Local Python
+Docker packages all dependencies so no local Python environment is needed.
+ 
+```bash
+# Build the image
+docker build -t nyc-311-pipeline .
+ 
+# Run the Streamlit dashboard
+docker run -p 8501:8501 \
+  --env-file .env \
+  -v "$HOME/.config/gcloud:/root/.config/gcloud:ro" \
+  nyc-311-pipeline
+ 
+# Run the Prefect ingestion flow
+docker run \
+  --env-file .env \
+  -v "$HOME/.config/gcloud:/root/.config/gcloud:ro" \
+  nyc-311-pipeline \
+  python workflow_orchestration/nyc_311_prefect_flow.py
+ 
+# Run dbt transformations
+docker run \
+  --env-file .env \
+  -v "$HOME/.config/gcloud:/root/.config/gcloud:ro" \
+  nyc-311-pipeline \
+  dbt run --profiles-dir .
+```
+ 
+**Windows PowerShell** — replace `$HOME/.config/gcloud` with `$env:APPDATA\gcloud`:
+```powershell
+docker run -p 8501:8501 --env-file .env `
+  -v "$env:APPDATA\gcloud:/root/.config/gcloud:ro" `
+  nyc-311-pipeline
+```
+ 
 ---  
 
   
-### Infrastructure as Code Terraform
-provisions GCS bucket (data lake), BigQuery dataset, and IAM roles automatically run in powershell / cmd.
-1. Install terraform CLI from https://developer.hashicorp.com/terraform/downloads
-2. Open terminal, cd into folder that contains terraform code, cd path\to\project
-3. run cd terraform/ (navigate to terraform directory)
-4. run terraform init (initialize terraform, downloads required providers)
-5. run terraform plan (preview resources that will be created)
-6. run terraform apply (create all cloud resources)
-7. when prompted, type yes to confirm.
-8. after running the above, we have a GCS bucket (data lake with raw files), BigQuery dataset (analytics storage), IAM roles (permissions)
 
----  
+### Run Ingestion Flow Prefect
+This fetches records from the NYC Open Data API and loads them into BigQuery.
+ 
+**Run once (no scheduling):**
+```bash
+python workflow_orchestration/nyc_311_prefect_flow.py
+```
+ 
+**With Prefect UI and daily scheduling:**
+```bash
+# Start the Prefect server (in a separate terminal)
+prefect server start
+ 
+# Register the daily deployment
+python workflow_orchestration/deployment.py
+ 
+# Trigger a manual run from the UI or CLI
+prefect deployment run "NYC 311 Ingestion/nyc-311-daily"
+```
+ 
+---
+  
 
-
-## Data Pipeline
-### Pipeline Type Batch Processing
-This pipeline uses batch processing because:
-- NYC 311 data updates periodically
-- historical analysis is required (data dates back to 2020)
-- real-time streaming is not necessary for this use case
-
+### Run dbt transformations
+```bash
+# Install dbt packages (first time only)
+dbt deps --profiles-dir .
+ 
+# Build all models (staging → intermediate → marts)
+dbt run --profiles-dir .
+ 
+# Run data quality tests
+dbt test --profiles-dir .
+ 
+# Generate and view documentation
+dbt docs generate --profiles-dir .
+dbt docs serve --profiles-dir .
+```
+ 
+After `dbt run` you will have the following tables/views in BigQuery:
+ 
+| Name | Type | Layer |
+|---|---|---|
+| `stg_311_requests` | view | staging |
+| `int_311_cleaned` | view | intermediate |
+| `fact_311_complaints` | table (partitioned) | marts |
+| `complaints_by_type` | table | marts |
+| `complaints_by_borough` | table | marts |
+| `complaints_over_time` | table | marts |
+| `dim_borough` | table | marts |
+ 
+---
+ 
+  
+  
+### View the dashboard
+ 
+**Streamlit (local):**
+```bash
+streamlit run dashboard.py
+```
+Open http://localhost:8501 in your browser.
+ 
+The dashboard loads data in this priority order:
+1. Live BigQuery query (if `GCP_PROJECT_ID` is set and ADC is configured)
+2. Local CSV export at `data/fact_311_complaints.csv`
+3. Generated sample data (fallback — always works for reviewers)
+ 
+**Looker Studio (primary dashboard):**
+ 
+The live interactive dashboard is hosted on Looker Studio and connects directly to the `fact_311_complaints` BigQuery table.
+ 
+<img width="961" alt="Looker Studio dashboard" src="https://github.com/user-attachments/assets/f1a53d34-11d3-4362-9d3c-21452a43186a" />
+ 
 ---
 
-### Workflow Orchestration Prefect
-Prefect orchestrates the pipeline by:
-- scheduling batch jobs
-- managing task dependencies across extract, load, and transform steps
-- handling retries and failure notifications automatically
+   
 
----  
+## Data Pipeline Detail
 
-### Data Lake GCS
-- data is extracted using dlt (data load tool)
-- source: NYC Open Data API
-- output format: parquet
+### Ingestion
 
-raw data is stored in:
-gs://<bucket-name>/raw/YYYY/MM/data.parquet  
-
----  
-
-### Data Warehouse BigQuery
-BigQuery is used for analytical queries
-Table Design - fact_311_requests:
-to reduce data scanned for time-range queries:
-Partitioned by:
-DATE(created_date) 
-
-to speed up filtered aggregations by location and category
-Clustered by:
-borough, complaint_type
-
-this is done for:
-- faster queries
-- reduced cost
-- optimized for analytics
-
+- **Source:** NYC Open Data API endpoint `erm2-nwe9` (311 Service Requests from 2010 to Present)
+- **Tool:** dlt with the `bigquery` destination
+- **Write mode:** `append` — new records are added on each run; historical data is preserved
+- **Batch size:** 50,000 rows per API call (Socrata API limit)
+- **Schema inference:** dlt automatically detects column types from the JSON response
+ 
 ---
 
-
-### Data Transformation dbt
-dbt transforms raw BigQuery data into analytics-ready models
-Models:  
-stg_311_requests cleans and standardizes raw data (types, nulls, naming)
-fact_311_requests adds derived columns (parsed date parts, response time in hours)    
-mart_complaint_trends: aggregated complaint coutns by type and date 
-mart_borough_summary: borough-level summaries for geographic analysis  
-
----  
-
-## Dashboard Visualization
-### Dashboard Overview
-an interactive dashboard built with looker studio that enables users to explore NYC 311 trends.
-while the primary dashboard is hosted on looker studio, a local streamlit version is provided for easy reproducibility. To view it locally, run: streamlit run dashboard.py.
-
-<img width="961" height="589" alt="image" src="https://github.com/user-attachments/assets/f1a53d34-11d3-4362-9d3c-21452a43186a" />
-<img width="933" height="523" alt="image" src="https://github.com/user-attachments/assets/c0369fa1-4e0e-41e7-934a-d9ed5526408c" />  
-
----
-
-
-### Tile 1 Categorical Distribution
-Bar Chart: Top Complaint Types
-- shows the most common 311 complaint type/borough categories 
-- helps identify high prority urban issues
-
-### Tile 2 Temporal Trends
-Line Chart: Daily Complaint Volume over Time
-- displays daily complaint counts from 2020 to present
-- highlights seasonal patterns, spikes, trends and seasonality 
-
----
-
-## Running the Pipeline
-Follow these steps in order to reproduce the full pipeline from scratch
+## Data Warehouse Design
+Prefect manages the pipeline schedule and retry logic:
+ 
+The `fact_311_complaints` table is optimised for analytical queries:
+ 
+- **Partitioned by** `DATE(created_date)` — BigQuery scans only the date partitions touched by a query, significantly reducing cost for time-range filters
+- **Clustered by** `borough, complaint_type` — speeds up filtered aggregations used by every dashboard chart
 
 --- 
 
-### Clone the Repository
-git clone https://github.com/YOUR_USERNAME/nyc-311-pipeline.git
-cd nyc-311-pipeline  
+### dbt Transformations
+ 
+```
+stg_311_requests          (view)   type casts, null filters, name standardisation
+    └── int_311_cleaned   (view)   DATE casts, resolution_time_hours, null borough removed
+            ├── fact_311_complaints      (table) daily × borough × type counts
+            ├── complaints_by_type       (table) total requests per complaint type
+            ├── complaints_by_borough    (table) total requests per borough
+            ├── complaints_over_time     (table) daily total request counts
+            └── dim_borough              (table) distinct valid borough names
+```
 
+Data quality tests (`dbt test`):
+- `unique_key` — unique and not null in staging and intermediate
+- `created_date`, `borough`, `complaint_type` — not null in the fact table
+- `request_date` — unique and not null in `complaints_over_time`
+- `borough` — unique and not null in `dim_borough`
+
+ 
 ---
 
-### Create Environment Varibles
-1. The .env file is listed in .gitignore and will not be committed to version control. never share credentials
-2. A reference file .env.example is included in the repository with placeholder values
-3. Copy the example environment file: cp .env.example .env
-4. Open .env and fill in your values:
-5. GCP_PROJECT_ID=your_project_id        # e.g. nyc-311-analytics-123456
-BUCKET_NAME=your_bucket_name          # e.g. nyc-311-raw-data
-DATASET_NAME=your_dataset_name        # e.g. nyc_311_warehouse
-NO JSON key required. Application default credentials via gcloud is sufficient for local development
-
----
-
-### Using Docker
-Docker packages all dependencies so no manual python environment setup is needed. This project uses authentication default credentials (ADC) so you mount your local gcloud credentials into container at runtime
-to build and run the container with environment variables and ADC credentials mounted: (in powershell, cd to project root directory and run...)
-
-docker build -t nyc-311-pipeline .
-
-docker run -p 8501:8501 --env-file .env `
-  -v "$env:APPDATA\gcloud:/root/.config/gcloud:ro" `
-  nyc-311-pipeline  
-
----
-
-### Execute Prefect Flow
-install prefect, create deployment
-pip install prefect
-prefect server start
-deployment yaml
-in terminal, cd to project root directory...
-prefect deployment run <flow-name>
-
----
-
-### Run dbt models
-cd dbt/
-dbt run (builds tables/models in BigQuery)
-dbt test (validates test quality)
+## Dashboard
+The Streamlit dashboard includes:
+ 
+- **KPI row** — total requests, distinct complaint types, boroughs covered (all filtered live)
+- **Sidebar filters** — filter by borough, complaint type, and date range
+- **Top complaint types** — horizontal bar chart of the 15 most common categories
+- **Daily complaint volume** — time-series line chart showing request trends
+- **Requests by borough** — donut/pie chart of geographic distribution
+- **Borough × type heatmap** — cross-tabulation of the 8 most common types across boroughs
+ 
+<img width="961" alt="Dashboard tile 1" src="https://github.com/user-attachments/assets/f1a53d34-11d3-4362-9d3c-21452a43186a" />
+<img width="933" alt="Dashboard tile 2" src="https://github.com/user-attachments/assets/c0369fa1-4e0e-41e7-934a-d9ed5526408c" />
 
 ---
 
@@ -278,3 +419,17 @@ This project demonstrates:
 - Batch data processing
 - Data modeling and transformation
 - Business intelligence visualization
+
+
+
+----------------------------------------------------------------------------------------------------------------------------
+
+## Dashboard Visualization
+### Dashboard Overview
+an interactive dashboard built with looker studio that enables users to explore NYC 311 trends.
+while the primary dashboard is hosted on looker studio, a local streamlit version is provided for easy reproducibility. To view it locally, run: streamlit run dashboard.py.
+
+<img width="961" height="589" alt="image" src="https://github.com/user-attachments/assets/f1a53d34-11d3-4362-9d3c-21452a43186a" />
+<img width="933" height="523" alt="image" src="https://github.com/user-attachments/assets/c0369fa1-4e0e-41e7-934a-d9ed5526408c" />  
+
+---
