@@ -13,7 +13,7 @@ SELECT
     agency,                                                                              -- these fields pass through unchanged; already clean from staging
     latitude,
     longitude,
-    TIMESTAMP_DIFF(closed_date, created_date, HOUR)               AS resolution_time_hours  -- FIX: was preceded by # comment syntax which BigQuery rejects
+    TIMESTAMP_DIFF(closed_date, created_date, HOUR)               AS resolution_time_hours  
 
 FROM {{ ref('stg_311_requests') }}   -- dbt builds stg_311_requests first due to this ref()
 
