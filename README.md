@@ -77,34 +77,20 @@ Looker Studio (Dashboard)
 
   
 ## Technologies Used
-Cloud & Infrastructure
-- Google Cloud Platform (GCP)
-- Terraform (Infrastructure as Code)
-
-Orchestration
-- prefect
-
-Data Ingestion
-- Python
-- dlt (Data Load Tool)
-
-Data Transformation
-- dbt (data build tool)
-
-Storage
-- Google Cloud Storage (GCS)
-
-Data Warehouse
-- BigQuery
-
-Visualization
-- Looker Studio
-
-DevOps & Environment
-- Docker
-- Git
-- gcloud CLI
-- Environment Variables
+| Category | Tool |
+|---|---|
+| Cloud platform | Google Cloud Platform (GCP) |
+| Infrastructure as Code | Terraform |
+| Orchestration | Prefect 2 |
+| Data ingestion | Python, dlt (Data Load Tool) |
+| Data warehouse | BigQuery |
+| Transformation | dbt (dbt-core + dbt-bigquery) |
+| Visualisation | Looker Studio (primary), Streamlit (local) |
+| Containerisation | Docker |
+| Version control | Git / GitHub |
+| Authentication | gcloud Application Default Credentials (ADC) |
+ 
+---
 
   
 ## Setup Instructions
