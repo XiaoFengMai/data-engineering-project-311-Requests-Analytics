@@ -159,7 +159,6 @@ DATASET_NAME="nyc_311_analytics"
 ### Infrastructure as Code Terraform
 Terraform creates the GCS bucket (data lake) and BigQuery dataset automatically.
 
-<img width="1440" height="776" alt="image" src="https://github.com/user-attachments/assets/49a248c5-64af-4cdc-a3ff-7957cb4de679" />
 
 raw parquet files stored in cloud storage
  
