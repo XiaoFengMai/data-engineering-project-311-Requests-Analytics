@@ -5,7 +5,7 @@
 # Data Ingestion
 requests==2.31.0
 pandas==2.2.1
-dlt[bigquery]==0.4.5          # FIX: removed bare 'dlt' line; dlt[bigquery] already includes dlt core
+dlt[bigquery]==0.4.5
 google-cloud-bigquery==3.17.2
 python-dotenv
 
@@ -19,4 +19,4 @@ dbt-bigquery==1.7.6
 # Dashboard / Visualization
 streamlit==1.32.0
 plotly==5.19.0
-numpy==1.26.4                 # added explicitly; used in dashboard.py sample data generation
+numpy==1.26.4        
