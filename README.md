@@ -360,7 +360,16 @@ The live interactive dashboard is hosted on Looker Studio and connects directly 
  
 ---
 
-## Data Warehouse Design
+### Orchestration
+Prefect manages the pipeline schedule and retry logic:
+ 
+- **Schedule:** daily at 02:00 UTC (`cron: "0 2 * * *"`)
+- **Retries:** 3 attempts with 60-second delay on the fetch task
+- **Work pool:** `default-agent-pool`
+- **Deployment:** registered via `workflow_orchestration/deployment.py`
+ 
+
+### Data Warehouse Design
 Prefect manages the pipeline schedule and retry logic:
  
 The `fact_311_complaints` table is optimised for analytical queries:
