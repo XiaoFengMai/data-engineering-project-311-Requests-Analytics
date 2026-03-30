@@ -158,6 +158,10 @@ DATASET_NAME="nyc_311_analytics"
 
 ### Infrastructure as Code Terraform
 Terraform creates the GCS bucket (data lake) and BigQuery dataset automatically.
+
+<img width="1440" height="776" alt="image" src="https://github.com/user-attachments/assets/49a248c5-64af-4cdc-a3ff-7957cb4de679" />
+
+raw parquet files stored in cloud storage
  
 ```bash
 # Navigate to the terraform directory
@@ -187,6 +191,9 @@ Return to the project root:
 cd ..
 ```
  
+<img width="1440" height="1950" alt="image" src="https://github.com/user-attachments/assets/ea7437d3-07d1-4007-ad5e-c767c0283a06" />
+
+GCS and BigQuery provisioned via Terraform
 
 ---  
 
@@ -368,8 +375,12 @@ Prefect manages the pipeline schedule and retry logic:
 - **Retries:** 3 attempts with 60-second delay on the fetch task
 - **Work pool:** `default-agent-pool`
 - **Deployment:** registered via `workflow_orchestration/deployment.py`
- 
 
+<img width="1440" height="1314" alt="image" src="https://github.com/user-attachments/assets/65170ae8-e946-44b8-be67-0cb9d5ea1c3b" />
+
+scheduled pipelines, retries, task logs  
+
+  
 ### Data Warehouse Design
 Prefect manages the pipeline schedule and retry logic:
  
@@ -377,6 +388,10 @@ The `fact_311_complaints` table is optimised for analytical queries:
  
 - **Partitioned by** `DATE(created_date)` — BigQuery scans only the date partitions touched by a query, significantly reducing cost for time-range filters
 - **Clustered by** `borough, complaint_type` — speeds up filtered aggregations used by every dashboard chart
+
+<img width="1440" height="1132" alt="image" src="https://github.com/user-attachments/assets/e346b2c9-7440-4df3-ab51-4ec9fdcd6257" />
+
+partitioning & clustering
 
 --- 
 
@@ -398,6 +413,12 @@ Data quality tests (`dbt test`):
 - `request_date` — unique and not null in `complaints_over_time`
 - `borough` — unique and not null in `dim_borough`
 
+<img width="1440" height="2534" alt="image" src="https://github.com/user-attachments/assets/117616ed-2448-4dee-9c12-86aa5749355a" />
+
+7 models, 14 tests pass  
+
+
+    
  
 ---
 
