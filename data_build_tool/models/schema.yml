@@ -1,34 +1,133 @@
-# the tests below validate data quality automatically when running data build tool test
+version: 2
 
-version: 2            # defines the schema format version used by dbt
+models:
 
-models:              # starts the list of models to document and test
-
-  - name: int_311_cleaned          # refers to the intermediate model
-    description: Cleaned dataset of NYC 311 service requests used for analytics.      # for dbt documentation pages
-
-    columns:              # defines column metadata 
-      - name: unique_key          # refers to the column in model
-        description: Unique identifier for each service request  
+  # ── Staging ────────────────────────────────────────────────────────────────
+  - name: stg_311_requests
+    description: >
+      Lightly transformed view of raw NYC 311 service requests loaded by dlt.
+      Casts all columns to correct types, filters out rows with no unique_key,
+      and standardises column names. One row per service request.
+    columns:
+      - name: unique_key
+        description: Unique identifier for each service request (source system key)
         tests:
-          - unique      # ensure no duplicates
-          - not_null    # ensures that every requests has an ID
-
-      - name: borough        # documents aggregated models and provides description for each category
-        description: Borough where the complaint originated
-
+          - unique
+          - not_null
+      - name: created_date
+        description: Timestamp when the service request was filed
+        tests:
+          - not_null
+      - name: closed_date
+        description: Timestamp when the request was resolved (nullable for open requests)
       - name: complaint_type
-        description: Category of service request
+        description: High-level category of the 311 complaint
+        tests:
+          - not_null
+      - name: descriptor
+        description: Sub-category providing additional detail about the complaint
+      - name: agency
+        description: NYC agency responsible for handling the request
+      - name: status
+        description: Current status of the request (Open, Closed, Pending, etc.)
+      - name: borough
+        description: NYC borough where the complaint was filed
+      - name: latitude
+        description: Latitude coordinate of the complaint location
+      - name: longitude
+        description: Longitude coordinate of the complaint location
+
+  # ── Intermediate ───────────────────────────────────────────────────────────
+  - name: int_311_cleaned
+    description: >
+      Cleaned dataset built on top of stg_311_requests. Timestamps are cast to
+      DATE, resolution_time_hours is calculated, and rows with no borough are removed.
+      Used as the base for complaint_type and borough mart aggregations.
+    columns:
+      - name: unique_key
+        description: Unique identifier for each service request
+        tests:
+          - unique
+          - not_null
+      - name: created_date
+        description: Date the request was filed (cast from timestamp)
+      - name: closed_date
+        description: Date the request was resolved (nullable)
+      - name: resolution_time_hours
+        description: Hours elapsed between created_date and closed_date (nullable for open requests)
+      - name: borough
+        description: Borough where the complaint was filed (nulls removed in this model)
+        tests:
+          - not_null
+
+  # ── Marts ──────────────────────────────────────────────────────────────────
+  - name: fact_311_complaints
+    description: >
+      Core fact table. Aggregates complaint counts by date, borough, and complaint_type.
+      Partitioned by created_date (day) and clustered by borough + complaint_type for
+      efficient dashboard queries. Materialized as a table.
+    columns:
+      - name: created_date
+        description: Date of the complaints (partition key)
+        tests:
+          - not_null
+      - name: borough
+        description: Borough where complaints were filed (cluster key)
+        tests:
+          - not_null
+      - name: complaint_type
+        description: Category of the complaints (cluster key)
+        tests:
+          - not_null
+      - name: complaint_count
+        description: Number of service requests for this date/borough/complaint_type combination
+        tests:
+          - not_null
 
   - name: complaints_by_type
-    description: Aggregated counts of complaints by type across NYC.
+    description: >
+      Aggregated total complaint counts grouped by complaint_type, ordered
+      highest to lowest. Drives the bar chart in the Looker Studio / Streamlit dashboard.
+    columns:
+      - name: complaint_type
+        description: Category of service request
+        tests:
+          - not_null
+      - name: total_requests
+        description: Total number of requests for this complaint type across all dates and boroughs
 
   - name: complaints_by_borough
-    description: Aggregated counts of complaints grouped by borough.
+    description: >
+      Aggregated total complaint counts grouped by borough, ordered highest to lowest.
+      Drives the pie/geographic chart in the dashboard.
+    columns:
+      - name: borough
+        description: NYC borough
+        tests:
+          - not_null
+      - name: total_requests
+        description: Total number of requests filed in this borough
 
   - name: complaints_over_time
-    description: Daily count of complaints to analyze seasonal trends.
+    description: >
+      Daily total complaint counts ordered chronologically.
+      Drives the time-series line chart in the dashboard.
+    columns:
+      - name: request_date
+        description: Calendar date (cast from created_date timestamp)
+        tests:
+          - not_null
+          - unique
+      - name: total_requests
+        description: Total number of requests filed on this date
 
-
-# run dbt docs in project to generate a documentatiion site that reads schema.yml, SQL models, and build a documentation website
-# run dbt docs serve in project to generate an interactive documentation site showing model lineage, column descriptions, and dependencies between tables
+  - name: dim_borough
+    description: >
+      Dimension table listing all distinct, valid borough names from the source data.
+      Used for reference joins and to validate borough values in other models.
+    columns:
+      - name: borough
+        description: Distinct borough name
+        tests:
+          - not_null
+          - unique
