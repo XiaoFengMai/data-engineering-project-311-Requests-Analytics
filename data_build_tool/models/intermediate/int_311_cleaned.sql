@@ -1,4 +1,4 @@
-# this model creates a cleaner dataset
+-- this model creates a cleaner dataset
 
 SELECT                            -- starts a transformation query
     unique_key,           
