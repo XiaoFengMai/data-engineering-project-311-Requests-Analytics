@@ -16,7 +16,7 @@
 
 * [Runnning the Pipeline](#running-the-pipeline)
   * [Option A Docker](#option-A-docker)
-  * [Option B Local Python](#local-python)
+  * [Option B Local Python](#option-b-local-python)
   * [Run Ingestion Flow Prefect](#run-ingestion-flow-prefect)
   * [Run dbt transformations](#run-dbt-transformations)
   * [View the dashboard](#view-the-dashboard)
