@@ -343,6 +343,7 @@ The dashboard loads data in this priority order:
 The live interactive dashboard is hosted on Looker Studio and connects directly to the `fact_311_complaints` BigQuery table.
  
 <img width="961" alt="Looker Studio dashboard" src="https://github.com/user-attachments/assets/f1a53d34-11d3-4362-9d3c-21452a43186a" />
+<img width="933" alt="Dashboard tile 2" src="https://github.com/user-attachments/assets/c0369fa1-4e0e-41e7-934a-d9ed5526408c" />
  
 ---
 
@@ -410,8 +411,9 @@ The Streamlit dashboard includes:
 - **Requests by borough** — donut/pie chart of geographic distribution
 - **Borough × type heatmap** — cross-tabulation of the 8 most common types across boroughs
  
-<img width="961" alt="Dashboard tile 1" src="https://github.com/user-attachments/assets/f1a53d34-11d3-4362-9d3c-21452a43186a" />
-<img width="933" alt="Dashboard tile 2" src="https://github.com/user-attachments/assets/c0369fa1-4e0e-41e7-934a-d9ed5526408c" />
+<img width="1440" height="2058" alt="image" src="https://github.com/user-attachments/assets/bd61e0d8-9caf-4c8f-bbf0-a77d5aa610a6" />
+
+
 
 ---
 
