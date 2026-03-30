@@ -34,7 +34,7 @@
 * [Sample Output Screenshots](#sample-output-screenshots)
 * [Final Notes](#final-notes)
 
-
+---
   
 ## Problem Statement
 New York City's 311 system receives hundreds of thousands of service requests every month covering noise complaints, sanitation issues, housing concerns, and infrastructure failures. Without an automated pipeline, analysts must manually download, clean, and aggregate this data — resulting in slow, error-prone workflows and limited visibility into trends.
@@ -45,7 +45,8 @@ This project builds a fully automated, cloud-native end-to-end data pipeline tha
 - Transforms it into analytics-ready models using dbt
 - Exposes insights through an interactive Looker Studio dashboard (with a local Streamlit fallback)
 
-    
+
+--- 
 
 ## Project Objectives 
 Build a data pipeline that
@@ -57,7 +58,9 @@ Build a data pipeline that
 6. **Visualize** — Build an interactive dashboard on Looker Studio (+ Streamlit locally)
 
 
-  
+---  
+
+
 
 ## Architecture Diagram
 NYC Open Data API
@@ -105,6 +108,7 @@ ensure that the following are installed and configured before proceeding
 - Google Cloud Account with billing enabled
   - see google cloud setup below
 
+---  
 
     
 ### Cloud Setup GCP
@@ -114,6 +118,7 @@ ensure that the following are installed and configured before proceeding
 4. authenticate gcloud CLI locally by running "gcloud auth application-default login" in powershell / cmd
 5. set active project by running "gcloud config set project YOUR_PROJECT_ID"
 
+---  
 
   
 ### Infrastructure as Code Terraform
@@ -127,7 +132,9 @@ provisions GCS bucket (data lake), BigQuery dataset, and IAM roles automatically
 7. when prompted, type yes to confirm.
 8. after running the above, we have a GCS bucket (data lake with raw files), BigQuery dataset (analytics storage), IAM roles (permissions)
 
-   
+---  
+
+
 ## Data Pipeline
 ### Pipeline Type Batch Processing
 This pipeline uses batch processing because:
@@ -135,14 +142,16 @@ This pipeline uses batch processing because:
 - historical analysis is required (data dates back to 2020)
 - real-time streaming is not necessary for this use case
 
-  
+---
+
 ### Workflow Orchestration Prefect
 Prefect orchestrates the pipeline by:
 - scheduling batch jobs
 - managing task dependencies across extract, load, and transform steps
 - handling retries and failure notifications automatically
 
-  
+---  
+
 ### Data Lake GCS
 - data is extracted using dlt (data load tool)
 - source: NYC Open Data API
@@ -151,6 +160,7 @@ Prefect orchestrates the pipeline by:
 raw data is stored in:
 gs://<bucket-name>/raw/YYYY/MM/data.parquet  
 
+---  
 
 ### Data Warehouse BigQuery
 BigQuery is used for analytical queries
@@ -167,7 +177,9 @@ this is done for:
 - faster queries
 - reduced cost
 - optimized for analytics
-- 
+
+---
+
 
 ### Data Transformation dbt
 dbt transforms raw BigQuery data into analytics-ready models
@@ -177,6 +189,7 @@ fact_311_requests adds derived columns (parsed date parts, response time in hour
 mart_complaint_trends: aggregated complaint coutns by type and date 
 mart_borough_summary: borough-level summaries for geographic analysis  
 
+---  
 
 ## Dashboard Visualization
 ### Dashboard Overview
@@ -186,7 +199,7 @@ while the primary dashboard is hosted on looker studio, a local streamlit versio
 <img width="961" height="589" alt="image" src="https://github.com/user-attachments/assets/f1a53d34-11d3-4362-9d3c-21452a43186a" />
 <img width="933" height="523" alt="image" src="https://github.com/user-attachments/assets/c0369fa1-4e0e-41e7-934a-d9ed5526408c" />  
 
-
+---
 
 
 ### Tile 1 Categorical Distribution
@@ -199,12 +212,18 @@ Line Chart: Daily Complaint Volume over Time
 - displays daily complaint counts from 2020 to present
 - highlights seasonal patterns, spikes, trends and seasonality 
 
+---
+
 ## Running the Pipeline
 Follow these steps in order to reproduce the full pipeline from scratch
+
+--- 
+
 ### Clone the Repository
 git clone https://github.com/YOUR_USERNAME/nyc-311-pipeline.git
 cd nyc-311-pipeline  
 
+---
 
 ### Create Environment Varibles
 1. The .env file is listed in .gitignore and will not be committed to version control. never share credentials
@@ -216,6 +235,8 @@ BUCKET_NAME=your_bucket_name          # e.g. nyc-311-raw-data
 DATASET_NAME=your_dataset_name        # e.g. nyc_311_warehouse
 NO JSON key required. Application default credentials via gcloud is sufficient for local development
 
+---
+
 ### Using Docker
 Docker packages all dependencies so no manual python environment setup is needed. This project uses authentication default credentials (ADC) so you mount your local gcloud credentials into container at runtime
 to build and run the container with environment variables and ADC credentials mounted: (in powershell, cd to project root directory and run...)
@@ -226,7 +247,8 @@ docker run -p 8501:8501 --env-file .env `
   -v "$env:APPDATA\gcloud:/root/.config/gcloud:ro" `
   nyc-311-pipeline  
 
-    
+---
+
 ### Execute Prefect Flow
 install prefect, create deployment
 pip install prefect
@@ -235,11 +257,14 @@ deployment yaml
 in terminal, cd to project root directory...
 prefect deployment run <flow-name>
 
+---
 
 ### Run dbt models
 cd dbt/
 dbt run (builds tables/models in BigQuery)
 dbt test (validates test quality)
+
+---
 
 ## Sample Output Screenshots
 <img width="1536" height="1024" alt="NYC 311 analytics png" src="https://github.com/user-attachments/assets/84f4609a-680c-4bf5-b538-79d4db51d4f1" />
