@@ -409,9 +409,13 @@ The Streamlit dashboard includes:
 - **Top complaint types** — horizontal bar chart of the 15 most common categories
 - **Daily complaint volume** — time-series line chart showing request trends
 - **Requests by borough** — donut/pie chart of geographic distribution
-- **Borough × type heatmap** — cross-tabulation of the 8 most common types across boroughs
- 
-<img width="1440" height="2058" alt="image" src="https://github.com/user-attachments/assets/bd61e0d8-9caf-4c8f-bbf0-a77d5aa610a6" />
+- **Borough × Complaint type** — cross-tabulation of the 8 most common types across boroughs
+
+<img width="1440" height="1958" alt="image" src="https://github.com/user-attachments/assets/02822907-baf1-4504-b53e-1588e7e9bcda" />
+<img width="179" height="91" alt="image" src="https://github.com/user-attachments/assets/dc223a02-70e6-4840-a2ae-09fc362c946e" />
+<img width="416" height="277" alt="image" src="https://github.com/user-attachments/assets/0b8d2a6d-ac40-4e97-ac3b-b68c7dc36ff7" />
+<img width="333" height="300" alt="image" src="https://github.com/user-attachments/assets/5161518f-804c-4b67-9c07-5dfda4f64db9" />
+
 
 
 
