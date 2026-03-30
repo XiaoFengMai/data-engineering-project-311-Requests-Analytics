@@ -1,0 +1,33 @@
+version: 2
+
+sources:
+  - name: staging                          # must match first arg in {{ source('staging', ...) }}
+    database: "{{ env_var('GCP_PROJECT_ID') }}"   # reads from your .env
+    schema: "{{ env_var('DATASET_NAME') }}"        # the raw dataset dlt loaded into
+    tables:
+      - name: service_requests             # must match second arg in {{ source('staging', 'service_requests') }}
+        description: >
+          Raw NYC 311 service request records loaded by dlt from the NYC Open Data API
+          (https://data.cityofnewyork.us/resource/erm2-nwe9.json).
+          Appended on every pipeline run. Partitioned by created_date after transformation.
+        columns:
+          - name: unique_key
+            description: Unique identifier assigned by the NYC 311 system
+          - name: created_date
+            description: Timestamp when the service request was filed
+          - name: closed_date
+            description: Timestamp when the request was resolved (nullable)
+          - name: complaint_type
+            description: High-level category of the complaint
+          - name: descriptor
+            description: Sub-category or additional detail about the complaint
+          - name: agency
+            description: NYC agency responsible for handling the request
+          - name: status
+            description: Current status of the request (Open, Closed, Pending, etc.)
+          - name: borough
+            description: NYC borough where the complaint was filed
+          - name: latitude
+            description: Latitude of the complaint location
+          - name: longitude
+            description: Longitude of the complaint location
