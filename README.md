@@ -376,7 +376,8 @@ Prefect manages the pipeline schedule and retry logic:
 - **Work pool:** `default-agent-pool`
 - **Deployment:** registered via `workflow_orchestration/deployment.py`
 
-<img width="1440" height="1314" alt="image" src="https://github.com/user-attachments/assets/65170ae8-e946-44b8-be67-0cb9d5ea1c3b" />
+<img width="968" height="333" alt="image" src="https://github.com/user-attachments/assets/6f11c3c4-8158-4c28-ba4b-c53a2e5efecb" />
+
 
 scheduled pipelines, retries, task logs  
 
